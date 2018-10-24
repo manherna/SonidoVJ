@@ -1,3 +1,12 @@
-﻿C:\software\programacion\MSVStudio2017\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(377,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
+﻿c:\software\programacion\MSVStudio2017\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(377,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
   main.cpp
-  SonidoOpenAL.vcxproj -> C:\hlocal\SonidoOpenAL\\Exes\SonidoOpenAL.exe
+c:\hlocal\sonidovj\sonidoopenal\sonidoopenal\main.cpp(37): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\hlocal\sonidovj\sonidoopenal\sonidoopenal\main.cpp(88): warning C4838: conversion from 'int' to 'ALfloat' requires a narrowing conversion
+c:\hlocal\sonidovj\sonidoopenal\sonidoopenal\main.cpp(88): warning C4244: 'initializing': conversion from 'int' to 'ALfloat', possible loss of data
+c:\hlocal\sonidovj\sonidoopenal\sonidoopenal\main.cpp(96): warning C4838: conversion from 'int' to 'ALfloat' requires a narrowing conversion
+c:\hlocal\sonidovj\sonidoopenal\sonidoopenal\main.cpp(96): warning C4244: 'initializing': conversion from 'int' to 'ALfloat', possible loss of data
+c:\hlocal\sonidovj\sonidoopenal\sonidoopenal\main.cpp(169): warning C4305: '+=': truncation from 'double' to 'float'
+c:\hlocal\sonidovj\sonidoopenal\sonidoopenal\main.cpp(173): warning C4305: '+=': truncation from 'double' to 'float'
+c:\hlocal\sonidovj\sonidoopenal\sonidoopenal\main.cpp(180): warning C4305: '-=': truncation from 'double' to 'float'
+c:\hlocal\sonidovj\sonidoopenal\sonidoopenal\main.cpp(184): warning C4305: '-=': truncation from 'double' to 'float'
+  SonidoOpenAL.vcxproj -> C:\hlocal\SonidoVJ\SonidoOpenAL\\Exes\SonidoOpenAL.exe

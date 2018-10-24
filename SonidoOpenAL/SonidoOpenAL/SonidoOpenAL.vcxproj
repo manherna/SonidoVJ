@@ -70,8 +70,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\hlocal\SonidoOpenAL\SonidoOpenAL\OpenALSDK\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\hlocal\SonidoOpenAL\SonidoOpenAL\OpenALSDK\libs\Win32;C:\hlocal\SonidoOpenAL\SonidoOpenAL\OpenALSDK\libs\Win64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)SonidoOpenAL\OpenALSDK\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)SonidoOpenAL\OpenALSDK\libs\Win32;$(SolutionDir)SonidoOpenAL\OpenALSDK\libs\Win64;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\Exes</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
