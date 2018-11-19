@@ -86,6 +86,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)Exes\$(Configuration)</OutDir>
     <IntDir>$(SolutionDir)Intermediates</IntDir>
+    <ExecutablePath>$(SolutionDir)Depen\SDL\$(PlatformTarget)\bin;$(ExecutablePath)</ExecutablePath>
+    <IncludePath>$(SolutionDir)Depen\SDL\$(PlatformTarget)\include;$(ExecutablePath);$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Depen\SDL\$(PlatformTarget)\lib;$(ExecutablePath);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)Exes\$(Configuration)</OutDir>
@@ -110,10 +113,13 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Depen/inc</AdditionalIncludeDirectories>
+      <MinimalRebuild>true</MinimalRebuild>
+      <UseFullPaths>false</UseFullPaths>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>fmodL64_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>fmodL64_vc.lib;SDL2d.lib;SDL2maind.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)Depen/lib</AdditionalLibraryDirectories>
+      <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
