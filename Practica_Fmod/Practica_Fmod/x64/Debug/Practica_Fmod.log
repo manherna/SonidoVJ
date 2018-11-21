@@ -1,1 +1,4 @@
-﻿
+﻿  main.cpp
+c:\hlocal\sonidovj\practica_fmod\practica_fmod\main.cpp(104): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+  Practica_Fmod.vcxproj -> C:\hlocal\SonidoVJ\Practica_Fmod\Exes\Practica_Fmod.exe
+  Practica_Fmod.vcxproj -> C:\hlocal\SonidoVJ\Practica_Fmod\Exes\Practica_Fmod.pdb (Partial PDB)
