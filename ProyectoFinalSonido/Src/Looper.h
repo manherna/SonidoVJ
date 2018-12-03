@@ -1,8 +1,9 @@
 #pragma once
 #include <fmod.h>
 #include <fmod.hpp>
+
 enum editMode {
-	NULL,
+	NULO,
 	MUTE,
 	VOLUME,
 	PITCH,
