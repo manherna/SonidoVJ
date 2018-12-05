@@ -1,12 +1,14 @@
 #include "Recorder.h"
 #include <iostream>
-
+#include <time.h>
 
 static FMOD::System * _system;
 static FMOD::Sound * recordedS;
 static FMOD_CREATESOUNDEXINFO exinfo;
 static int nativeRate;
 static int nativeChannels;
+static clock_t ini;
+static clock_t fin;
 
 static unsigned int driftThreshold;
 static unsigned int desiredLatency;
@@ -37,9 +39,8 @@ void Recorder::init(FMOD::System * syst)
 	exinfo.numchannels = nativeChannels;
 	exinfo.format = FMOD_SOUND_FORMAT_PCM16;
 	exinfo.defaultfrequency = nativeRate;
-	exinfo.length = nativeRate* sizeof(short) * nativeChannels; /* 1 second buffer, size here doesn't change latency */
-	recordedS = NULL;
-	result =_system->createSound(0, FMOD_LOOP_NORMAL | FMOD_OPENUSER, &exinfo, &recordedS);
+	exinfo.length = nativeRate* sizeof(short) * nativeChannels * 15; /* 1 second buffer, size here doesn't change latency */
+
 
 	std::cout << "Recorder Inicializado" << std::endl;
 }
@@ -56,12 +57,20 @@ int Recorder::getNativeChannels()
 
 int Recorder::startRecording()
 {
-	return _system->recordStart(DEVICE_INDEX, recordedS, true);
+	recordedS = NULL;
+	FMOD_RESULT result = _system->createSound(0, FMOD_LOOP_NORMAL | FMOD_OPENUSER, &exinfo, &recordedS);
+	result = _system->recordStart(DEVICE_INDEX, recordedS, true);
+	ini = clock();
+	return  result;
 }
 
 FMOD::Sound * Recorder::stopRecording()
 {
-	_system->recordStop(DEVICE_INDEX);
+	fin = clock();
+	int a = _system->recordStop(DEVICE_INDEX);
+	std::cout << (fin - ini) * 1000 << " "<<a << std::endl;
+	recordedS->setLoopPoints(0, FMOD_TIMEUNIT_MS, (fin - ini) * 1000 / (CLOCKS_PER_SEC), FMOD_TIMEUNIT_MS);
+
 	FMOD::Sound * aux = recordedS;
 	recordedS = nullptr;
 	return aux;

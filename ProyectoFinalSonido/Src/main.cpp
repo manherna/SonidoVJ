@@ -50,17 +50,19 @@ int FMOD_Main()
 	while (true) 
 	{
 		if (_kbhit()) {
-			char c = getchar();
+			char c = _getch();
 
 			if (c == 'r')
 			{
 				if (!Recorder::isRecording()) {
-					if (snd != nullptr)delete snd;
+					//if (snd != nullptr)delete snd;
 					Recorder::startRecording();
+					std::cout << "Recording" << std::endl;
 				}
 				else {
 					snd = Recorder::stopRecording();
 					system->playSound(snd, NULL, false, &chnel);
+					std::cout << "Stopped Recording" << std::endl;
 					
 				}
 			}
