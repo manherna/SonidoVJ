@@ -21,15 +21,18 @@
   <ItemGroup>
     <ClCompile Include="..\Src\Looper.cpp" />
     <ClCompile Include="..\Src\main.cpp" />
+    <ClCompile Include="LooperChannel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Src\Looper.h" />
+    <ClInclude Include="..\Src\Utilities.h" />
+    <ClInclude Include="LooperChannel.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{D0BF6B9A-1507-4B60-BEB5-4770FCABB7AF}</ProjectGuid>
     <RootNamespace>LooperBasico</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

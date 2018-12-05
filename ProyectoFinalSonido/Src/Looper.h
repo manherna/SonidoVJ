@@ -1,13 +1,10 @@
 #pragma once
 #include <fmod.h>
 #include <fmod.hpp>
-enum editMode {
-	NULL,
-	MUTE,
-	VOLUME,
-	PITCH,
-	FLANGER
-};
+#include <fmod_errors.h>
+
+
+enum EditMode { NOTHING = 0, MUTE = 1, VOLUME = 2, PITCH = 3, FLANGER = 4, };
 
 class Looper {
 public:
@@ -22,5 +19,13 @@ public:
 
 private:
 	int _activeChannel;
-	editMode _activeMode;
+	EditMode _activeMode;
+	FMOD::System * _system;
+	//TODO: REMOVE THIS. DEBUG PURPOSE ONLY
+	FMOD::Sound *_sound;
+	FMOD::Sound *_snd2;
+
+	FMOD::Channel *_channel;
+	FMOD::Channel *_channel2;
 };
+
