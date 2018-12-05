@@ -1,11 +1,11 @@
 #include "fmod.hpp"
 #include "common.h"
-#include "FMODSystem.h"
+#include "Recorder.h"
 
 class RecordedSound {
 
 public:
-	RecordedSound(FMODSystem *s);
+	RecordedSound(Recorder *s);
 	~RecordedSound() {}
 
 	FMOD::Channel* getChannel() { return channel; }
@@ -20,7 +20,7 @@ private:
 	FMOD::Channel *channel = NULL;
 	FMOD_CREATESOUNDEXINFO exinfo;
 	FMOD::Sound *sound;
-	FMODSystem *system_;
+	Recorder *system_;
 	int result;
 
 	//Vector de efectos? (o solo uno?)

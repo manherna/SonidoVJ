@@ -30,7 +30,7 @@
     <ClCompile Include="..\Src\common_platform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Src\FMODSystem.cpp">
+    <ClCompile Include="..\Src\Recorder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -47,7 +47,7 @@
     <ClInclude Include="..\Src\common_platform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Src\FMODSystem.h">
+    <ClInclude Include="..\Src\Recorder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

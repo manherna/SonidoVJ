@@ -21,17 +21,23 @@
   <ItemGroup>
     <ClCompile Include="..\Src\common.cpp" />
     <ClCompile Include="..\Src\common_platform.cpp" />
-    <ClCompile Include="..\Src\FMODSystem.cpp" />
+    <ClCompile Include="..\Src\Recorder.cpp" />
     <ClCompile Include="..\Src\Looper.cpp" />
     <ClCompile Include="..\Src\main.cpp" />
-    <ClCompile Include="..\Src\RecordedSound.cpp" />
+    <ClCompile Include="..\Src\RecordedSound.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Src\common.h" />
     <ClInclude Include="..\Src\common_platform.h" />
-    <ClInclude Include="..\Src\FMODSystem.h" />
+    <ClInclude Include="..\Src\Recorder.h" />
     <ClInclude Include="..\Src\Looper.h" />
-    <ClInclude Include="..\Src\RecordedSound.h" />
+    <ClInclude Include="..\Src\RecordedSound.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

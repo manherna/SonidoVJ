@@ -1,7 +1,7 @@
 #include "RecordedSound.h"
 #include <iostream>
 
-RecordedSound::RecordedSound(FMODSystem* s)
+RecordedSound::RecordedSound(Recorder* s)
 {
 	system_ = s;
 
@@ -29,10 +29,7 @@ void RecordedSound::stopRecording()
 	system_->getSystem()->recordStop(DEVICE_INDEX);
 }
 
-void RecordedSound::playRecord() 
-{
-	system_->getSystem()->playSound(sound, 0, false, &channel);
-}
+
 
 bool RecordedSound::isRecording()
 {
