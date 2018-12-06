@@ -61,6 +61,14 @@ void LooperChannel::loadSound(const char * soundName, const bool & looping)
 	setLooping(looping);
 }
 
+void LooperChannel::loadFile(const char * path, const bool & looping)
+{
+	std::string buf(path);
+	//buf.append(soundName);
+	FMOD_RESULT result = _system->createSound(buf.data(), NULL, 0, &_sound);
+	
+	setLooping(looping);
+}
 
 /*
 	Reproduce un sonido.

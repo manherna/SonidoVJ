@@ -4,7 +4,7 @@
 #include <fmod_errors.h>
 #include "LooperChannel.h"
 
-#define NUM_LOOPER_CHANNELS 8
+#define NUM_LOOPER_CHANNELS 9
 
 enum EditMode { NOTHING, PLAY, STOP, LOOP, VOLUME, PITCH, FLANGER};
 
@@ -15,16 +15,20 @@ public:
 
 	bool run();
 	bool init();
-	void release();
+	void release();	
 
 private:
 	void processKeys();
+	void processDrop();
+	void loadSound();
 	void processState();
 	void playChannel(const int &n);
 	void pauseChannel(const int & nc);
 	void toggleLoopChannel(const int & n);
 	void printHUD();
 
+	char* dropped_filedir;
+	bool archivoCaido = false;
 
 	FMOD::System * _system;
 	LooperChannel * _channels[NUM_LOOPER_CHANNELS];

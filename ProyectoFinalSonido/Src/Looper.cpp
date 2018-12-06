@@ -102,6 +102,9 @@ void Looper::processKeys()
 		case (SDLK_8):
 			_activeChannel = 7;
 			break;
+		case (SDLK_9):
+			_activeChannel = 8;
+			break;
 		case (SDLK_0):
 			_activeChannel = -1;
 			break;
@@ -183,13 +186,30 @@ void Looper::printHUD()
 	printf("Channels can be selected with numbers 1-8\n");
 	printf("-------------------------------------------------------------------\n");
 
+	if(archivoCaido)
+		printf("Loaded file: %s\n", dropped_filedir);
+
+}
+
+void Looper::processDrop()
+{
+	SDL_Event e;
+	SDL_PollEvent(&e);
+	if (e.type == SDL_DROPFILE) {
+		dropped_filedir = e.drop.file;		
+
+		archivoCaido = true;
+		_activeChannel = 8;		
+		_channels[_activeChannel]->loadFile(dropped_filedir);		
+	}
 }
 
 bool Looper::run() {
 	system("CLS");
 
 	processKeys();
-	processState();
+	processDrop();
+	processState();	
 
 
 	FMOD_RESULT res = _system->update();

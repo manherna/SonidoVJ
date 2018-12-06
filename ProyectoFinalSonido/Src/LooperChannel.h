@@ -17,6 +17,7 @@ public:
 	virtual ~LooperChannel();
 	void loadSound(FMOD::Sound *, const bool & looping = false);
 	void loadSound(const char * soundName,const bool & looping = false);
+	void loadFile(const char * soundName, const bool & looping = false);
 	void playSound();
 	void pauseSound();
 	short getChannelNumber();

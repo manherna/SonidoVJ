@@ -9,14 +9,16 @@ int main(int argc, char *args[])
 
 
 	SDL_Window *window = NULL;
+
 	if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) ==-1)
 		return  -1;
-	SDL_Window * z = SDL_CreateWindow("Hola holita", 0, 0, 300, 300, 0);
 
-	Looper * a = new Looper();
-	if (!a->init())exit(-1);
-	while (a->run());
-	a->release();
-	delete a;
+	SDL_Window * z = SDL_CreateWindow("Looper", 300, 300, 300, 300, 0);
+
+	Looper * looper = new Looper();
+	if (!looper->init())exit(-1);
+	while (looper->run());
+	looper->release();
+	delete looper;
 	exit(0);
 }
