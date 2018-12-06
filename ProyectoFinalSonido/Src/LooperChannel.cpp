@@ -8,14 +8,23 @@ LooperChannel::LooperChannel() :_system(nullptr), _sound(nullptr), _channel(null
 
 LooperChannel::LooperChannel(FMOD::System * syst, const short & channelNo): _system(syst), _channelNo(channelNo)
 {
+	_attr.loop = false;
+	_attr.pitch = 1.0f;
+	_attr.volume = 1.0f;
 }
 
 LooperChannel::LooperChannel(FMOD::System * syst, const char * soundName, const short & channelNo): _system(syst), _channelNo(channelNo)
 {	
-
+	_attr.loop = false;
+	_attr.pitch = 1.0f;
+	_attr.volume = 1.0f;
 	std::string buf("../Sounds/");
 	buf.append(soundName);
-	_system->createSound(buf.data(), FMOD_LOOP_NORMAL, 0, &_sound);
+	_attr.loop = false;
+	_attr.pitch = 1.0f;
+	_attr.volume = 1.0f;
+
+	_system->createSound(buf.data(), FMOD_LOOP_OFF, 0, &_sound);
 }
 
 LooperChannel::~LooperChannel()
@@ -49,7 +58,6 @@ void LooperChannel::loadSound(const char * soundName, const bool & looping)
 	std::string buf("../Sounds/");
 	buf.append(soundName);
 	_system->createSound(buf.data(),NULL, 0, &_sound);
-
 	setLooping(looping);
 }
 
@@ -69,7 +77,9 @@ void LooperChannel::playSound()
 	}
 	else {
 		_system->playSound(_sound, 0, false, &_channel);
+		
 	}
+	setLooping(_attr.loop);
 }
 short LooperChannel::getChannelNumber()
 {

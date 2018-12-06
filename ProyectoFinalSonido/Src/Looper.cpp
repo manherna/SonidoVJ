@@ -3,6 +3,7 @@
 #include <iostream>
 #include "Utilities.h"
 #include <SDL2\SDL.h>
+#include <stdlib.h>
 Looper::Looper() {
 
 }
@@ -35,7 +36,7 @@ bool Looper::init()
 	_activeChannel = 0;
 	_channels[_activeChannel]->loadSound("hiphop.wav");
 	_activeChannel++;	
-	_channels[_activeChannel]->loadSound("cmon.wav");
+	_channels[_activeChannel]->loadSound("one.wav");
 	_activeChannel++;
 	_channels[_activeChannel]->loadSound("t1.wav");
 	_activeChannel++;
@@ -44,7 +45,11 @@ bool Looper::init()
 	_channels[_activeChannel]->loadSound("t3.wav");
 	_activeChannel++;
 	_channels[_activeChannel]->loadSound("t4.wav");
-
+	_activeChannel++;
+	_channels[_activeChannel]->loadSound("uh.wav");
+	_activeChannel++;
+	_channels[_activeChannel]->loadSound("again.wav");
+	_activeChannel = -1;
 	return true;
 
 
@@ -66,6 +71,93 @@ void Looper::release() {
 	}
 }
 
+void Looper::processKeys()
+{
+	SDL_Event e;
+	SDL_PollEvent(&e);
+	if (e.type == SDL_KEYDOWN) {
+		_keypressed = true;
+		switch (e.key.keysym.sym) {
+		case (SDLK_1):
+			_activeChannel = 0;
+			break;
+		case (SDLK_2):
+			_activeChannel = 1;
+			break;
+		case (SDLK_3):
+			_activeChannel = 2;
+			break;
+		case (SDLK_4):
+			_activeChannel = 3;
+			break;
+		case (SDLK_5):
+			_activeChannel = 4;
+			break;
+		case (SDLK_6):
+			_activeChannel = 5;
+			break;
+		case (SDLK_7):
+			_activeChannel = 6;
+			break;
+		case (SDLK_8):
+			_activeChannel = 7;
+			break;
+		case (SDLK_0):
+			_activeChannel = -1;
+			break;
+		case (SDLK_p):
+			_lastActiveMode = _activeMode;
+			_activeMode = PLAY;
+			break;
+		case (SDLK_s):
+			_lastActiveMode = _activeMode;
+			_activeMode = STOP;
+			break;
+		case (SDLK_o):
+			_lastActiveMode = _activeMode;
+			_activeMode = PITCH;
+			break;
+		case (SDLK_v):
+			_lastActiveMode = _activeMode;
+			_activeMode = VOLUME;
+			break;
+		case (SDLK_l):
+			_lastActiveMode = _activeMode;
+			_activeMode = LOOP;
+			break;
+		case (SDLK_n):
+			_lastActiveMode = _activeMode;
+			_activeMode = NOTHING;
+		case(SDLK_SPACE):
+			_lastActiveMode = _activeMode;
+			_activeMode = NOTHING;
+			_activeChannel = -1;
+		default:
+			_keypressed = false;
+			break;
+		}
+	}
+}
+
+void Looper::processState()
+{
+	if (!_keypressed || (_activeChannel < 0)) return;
+	switch (_activeMode)
+	{
+	case(PLAY):
+		playChannel(_activeChannel);
+		break;
+	
+	//TODO:CASE(STOP)
+	case(LOOP):
+		toggleLoopChannel(_activeChannel);
+		break;
+	}
+	
+	_keypressed = false;
+
+}
+
 void Looper::playChannel(const int & n)
 {
 	if (n < 0 || n> NUM_LOOPER_CHANNELS)
@@ -74,7 +166,32 @@ void Looper::playChannel(const int & n)
 	_channels[n]->playSound();
 }
 
+void Looper::toggleLoopChannel(const int & n)
+{
+	_channels[n]->setLooping(!_channels[n]->getLooping());
+}
+
+void Looper::printHUD()
+{
+	printf("Active Mode: %d\n", _activeMode);
+	printf("Active Channel %d\n", _activeChannel);
+	printf("-------------------------------------------------------------------\n");
+	printf("Channels can be selected with numbers 1-8\n");
+	printf("LOOPER MODES:\n");
+	printf("P: PLAY MODE. Select a Channel and then P to play it\n");
+	printf("L: LOOP MODE. Select a Channel and then L to toggle its loop state\n");
+	printf("Channels can be selected with numbers 1-8\n");
+	printf("-------------------------------------------------------------------\n");
+
+}
+
 bool Looper::run() {
+	system("CLS");
+
+	processKeys();
+	processState();
+
+
 	FMOD_RESULT res = _system->update();
 	try
 	{
@@ -86,45 +203,7 @@ bool Looper::run() {
 		system("PAUSE");
 		return false;
 	}
-	SDL_Event e;
-	SDL_PollEvent(&e);
-	if (e.type == SDL_KEYDOWN) {
-		switch (e.key.keysym.sym) {
-		case (SDLK_1):
-			_activeChannel = 0;
-			playChannel(_activeChannel);
-			break;
-		case (SDLK_2):
-			_activeChannel = 1;
-			playChannel(_activeChannel);
-			break;
-		case (SDLK_3):
-			_activeChannel = 2;
-			playChannel(_activeChannel);
-			break;
-		case (SDLK_4):
-			_activeChannel = 3;
-			playChannel(_activeChannel);
-			break;
-		case (SDLK_5):
-			_activeChannel = 4;
-			playChannel(_activeChannel);
-			break;
-		case (SDLK_6):
-			_activeChannel = 5;
-			playChannel(_activeChannel);
-			break;
-
-		case(SDLK_l):
-			LooperChannel * aux = _channels[_activeChannel];
-			aux->setLooping(!aux->getLooping());
-			std::cout << "Looping is now: "<< aux->getLooping() << std::endl;
-		}
-			
-	}
-	
-
-
+	printHUD();
 	return true;
 }
 

@@ -6,7 +6,7 @@
 
 #define NUM_LOOPER_CHANNELS 8
 
-enum EditMode { NOTHING = 0, MUTE = 1, VOLUME = 2, PITCH = 3, FLANGER = 4, };
+enum EditMode { NOTHING, PLAY, STOP, LOOP, VOLUME, PITCH, FLANGER};
 
 class Looper {
 public:
@@ -16,17 +16,23 @@ public:
 	bool run();
 	bool init();
 	void release();
-	void processKeys();
-	void playChannel(const int &n);
-	void pauseChannel(const int & nc);
 
 private:
+	void processKeys();
+	void processState();
+	void playChannel(const int &n);
+	void pauseChannel(const int & nc);
+	void toggleLoopChannel(const int & n);
+	void printHUD();
+
+
 	FMOD::System * _system;
 	LooperChannel * _channels[NUM_LOOPER_CHANNELS];
 
 	EditMode _activeMode;
+	EditMode _lastActiveMode;
 	short _activeChannel;
-
+	bool _keypressed;
 
 	//TODO: REMOVE THIS. DEBUG PURPOSE ONLY
 	FMOD::Sound *_sound;

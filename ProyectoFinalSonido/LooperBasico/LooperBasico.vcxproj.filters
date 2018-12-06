@@ -18,10 +18,10 @@
     <ClCompile Include="..\Src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Src\Looper.cpp">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\Src\LooperChannel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\Looper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
