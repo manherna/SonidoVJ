@@ -1,6 +1,7 @@
-﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(376,5): warning MSB8004: Intermediate Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Intermediate Directory.
-C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(377,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
-cl : Command line warning D9035: option 'Gm' has been deprecated and will be removed in a future release
-  Looper.cpp
-c:\users\pccom\desktop\universidad\ucm\cuarto\sonidovj\proyectofinalsonido\src\utilities.h(9): warning C4715: 'ERRCHECK': not all control paths return a value
-  LooperBasico.vcxproj -> C:\Users\PcCom\Desktop\UNIVERSIDAD\UCM\CUARTO\SonidoVJ\ProyectoFinalSonido\Exes\Debug\LooperBasico.exe
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(376,5): warning MSB8004: El directorio Intermediate no termina con una barra diagonal final. Esta instancia de compilación agregará la barra diagonal porque es necesaria para que se pueda evaluar correctamente el directorio Intermediate.
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(377,5): warning MSB8004: El directorio Output no termina con una barra diagonal final. Esta instancia de compilación agregará la barra diagonal porque es necesaria para que se pueda evaluar correctamente el directorio Output.
+  HUDButton.cpp
+e:\carrera\sonidovj\proyectofinalsonido\src\hudrenderable.h(2): warning C4099: 'SDL_Renderer': nombre de tipo visto anteriormente usando 'struct' ahora se ve usando 'class'
+  e:\carrera\sonidovj\proyectofinalsonido\depen\sdl\x64\include\sdl2\sdl_render.h(122): note: vea la declaración de 'SDL_Renderer'
+SDL2maind.lib(SDL_windows_main.obj) : warning LNK4099: no se encontr¾ PDB 'vc120.pdb' con 'SDL2maind.lib(SDL_windows_main.obj)' o en 'E:\Carrera\SonidoVJ\ProyectoFinalSonido\Exes\Debug\vc120.pdb'; se vincularß el objeto sin tener en cuenta informaci¾n de depuraci¾n
+  LooperBasico.vcxproj -> E:\Carrera\SonidoVJ\ProyectoFinalSonido\Exes\Debug\LooperBasico.exe

@@ -19,13 +19,20 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Src\HUDButton.cpp" />
     <ClCompile Include="..\Src\Looper.cpp" />
     <ClCompile Include="..\Src\LooperChannel.cpp" />
+    <ClCompile Include="..\Src\LooperHUD.cpp" />
     <ClCompile Include="..\Src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Src\ClickListener.h" />
+    <ClInclude Include="..\Src\ConcurrentQueue.h" />
+    <ClInclude Include="..\Src\HUDButton.h" />
+    <ClInclude Include="..\Src\HUDRenderable.h" />
     <ClInclude Include="..\Src\Looper.h" />
     <ClInclude Include="..\Src\LooperChannel.h" />
+    <ClInclude Include="..\Src\LooperHUD.h" />
     <ClInclude Include="..\Src\Utilities.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -119,6 +126,8 @@
       <AdditionalIncludeDirectories>$(SolutionDir)Depen/inc</AdditionalIncludeDirectories>
       <MinimalRebuild>true</MinimalRebuild>
       <UseFullPaths>false</UseFullPaths>
+      <LanguageStandard>
+      </LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>fmodL64_vc.lib;SDL2d.lib;SDL2maind.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -151,6 +160,8 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Depen/inc</AdditionalIncludeDirectories>
+      <LanguageStandard>
+      </LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

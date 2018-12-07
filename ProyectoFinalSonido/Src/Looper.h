@@ -3,7 +3,7 @@
 #include <fmod.hpp>
 #include <fmod_errors.h>
 #include "LooperChannel.h"
-
+#include <SDL2\SDL.h>
 #define NUM_LOOPER_CHANNELS 9
 
 enum EditMode { NOTHING, PLAY, STOP, LOOP, VOLUME, PITCH, FLANGER};
@@ -18,8 +18,9 @@ public:
 	void release();	
 
 private:
-	void processKeys();
-	void processDrop();
+	void handleEvents();
+	void processKeys(const SDL_Event & e);
+	void processDrop(const SDL_Event & e);
 	void loadSound();
 	void processState();
 	void playChannel(const int &n);

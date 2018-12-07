@@ -71,76 +71,97 @@ void Looper::release() {
 	}
 }
 
-void Looper::processKeys()
+void Looper::handleEvents()
 {
 	SDL_Event e;
 	SDL_PollEvent(&e);
-	if (e.type == SDL_KEYDOWN) {
-		_keypressed = true;
-		switch (e.key.keysym.sym) {
-		case (SDLK_1):
-			_activeChannel = 0;
-			break;
-		case (SDLK_2):
-			_activeChannel = 1;
-			break;
-		case (SDLK_3):
-			_activeChannel = 2;
-			break;
-		case (SDLK_4):
-			_activeChannel = 3;
-			break;
-		case (SDLK_5):
-			_activeChannel = 4;
-			break;
-		case (SDLK_6):
-			_activeChannel = 5;
-			break;
-		case (SDLK_7):
-			_activeChannel = 6;
-			break;
-		case (SDLK_8):
-			_activeChannel = 7;
-			break;
-		case (SDLK_9):
-			_activeChannel = 8;
-			break;
-		case (SDLK_0):
-			_activeChannel = -1;
-			break;
-		case (SDLK_p):
-			_lastActiveMode = _activeMode;
-			_activeMode = PLAY;
-			break;
-		case (SDLK_s):
-			_lastActiveMode = _activeMode;
-			_activeMode = STOP;
-			break;
-		case (SDLK_o):
-			_lastActiveMode = _activeMode;
-			_activeMode = PITCH;
-			break;
-		case (SDLK_v):
-			_lastActiveMode = _activeMode;
-			_activeMode = VOLUME;
-			break;
-		case (SDLK_l):
-			_lastActiveMode = _activeMode;
-			_activeMode = LOOP;
-			break;
-		case (SDLK_n):
-			_lastActiveMode = _activeMode;
-			_activeMode = NOTHING;
-		case(SDLK_SPACE):
-			_lastActiveMode = _activeMode;
-			_activeMode = NOTHING;
-			_activeChannel = -1;
-		default:
-			_keypressed = false;
-			break;
-		}
+	switch(e.type)
+	{
+	case(SDL_KEYDOWN):
+		processKeys(e);
+		break;
+	case(SDL_DROPFILE):
+		processDrop(e);
+		break;
+	}
+
+}
+
+void Looper::processKeys(const SDL_Event & e)
+{
+
+	_keypressed = true;
+	switch (e.key.keysym.sym) {
+	case (SDLK_1):
+		_activeChannel = 0;
+		break;
+	case (SDLK_2):
+		_activeChannel = 1;
+		break;
+	case (SDLK_3):
+		_activeChannel = 2;
+		break;
+	case (SDLK_4):
+		_activeChannel = 3;
+		break;
+	case (SDLK_5):
+		_activeChannel = 4;
+		break;
+	case (SDLK_6):
+		_activeChannel = 5;
+		break;
+	case (SDLK_7):
+		_activeChannel = 6;
+		break;
+	case (SDLK_8):
+		_activeChannel = 7;
+		break;
+	case (SDLK_9):
+		_activeChannel = 8;
+		break;
+	case (SDLK_0):
+		_activeChannel = -1;
+		break;
+	case (SDLK_p):
+		_lastActiveMode = _activeMode;
+		_activeMode = PLAY;
+		break;
+	case (SDLK_s):
+		_lastActiveMode = _activeMode;
+		_activeMode = STOP;
+		break;
+	case (SDLK_o):
+		_lastActiveMode = _activeMode;
+		_activeMode = PITCH;
+		break;
+	case (SDLK_v):
+		_lastActiveMode = _activeMode;
+		_activeMode = VOLUME;
+		break;
+	case (SDLK_l):
+		_lastActiveMode = _activeMode;
+		_activeMode = LOOP;
+		break;
+	case (SDLK_n):
+		_lastActiveMode = _activeMode;
+		_activeMode = NOTHING;
+	case(SDLK_SPACE):
+		_lastActiveMode = _activeMode;
+		_activeMode = NOTHING;
+		_activeChannel = -1;
+	default:
+		_keypressed = false;
+		break;
 	}
 }
+void Looper::processDrop(const SDL_Event & e)
+{
+	dropped_filedir = e.drop.file;
+	archivoCaido = true;
+	_channels[_activeChannel]->loadFile(dropped_filedir);
+
+}
+
 
 void Looper::processState()
 {
@@ -191,24 +212,11 @@ void Looper::printHUD()
 
 }
 
-void Looper::processDrop()
-{
-	SDL_Event e;
-	SDL_PollEvent(&e);
-	if (e.type == SDL_DROPFILE) {
-		dropped_filedir = e.drop.file;		
-
-		archivoCaido = true;
-		_activeChannel = 8;		
-		_channels[_activeChannel]->loadFile(dropped_filedir);		
-	}
-}
 
 bool Looper::run() {
 	system("CLS");
 
-	processKeys();
-	processDrop();
+	handleEvents();
 	processState();	
 
 
