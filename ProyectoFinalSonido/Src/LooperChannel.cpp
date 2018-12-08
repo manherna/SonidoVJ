@@ -2,8 +2,6 @@
 #include <stdio.h>
 #include <string>
 
-
-
 LooperChannel::LooperChannel() :_system(nullptr), _sound(nullptr), _channel(nullptr) {}
 
 LooperChannel::LooperChannel(FMOD::System * syst, const short & channelNo): _system(syst), _channelNo(channelNo)

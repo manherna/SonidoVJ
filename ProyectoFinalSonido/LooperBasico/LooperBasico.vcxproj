@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -51,7 +51,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -90,9 +90,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)Exes\$(Configuration)</OutDir>
     <IntDir>$(SolutionDir)Intermediates</IntDir>
-    <ExecutablePath>$(SolutionDir)Depen\SDL\$(PlatformTarget)\bin;$(ExecutablePath)</ExecutablePath>
-    <IncludePath>$(SolutionDir)Depen\SDL\$(PlatformTarget)\include;$(ExecutablePath);$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Depen\SDL\$(PlatformTarget)\lib;$(ExecutablePath);$(LibraryPath)</LibraryPath>
+    <ExecutablePath>$(SolutionDir)Depen\SDL2\$(PlatformTarget)\bin;$(ExecutablePath)</ExecutablePath>
+    <IncludePath>$(SolutionDir)Depen\SDL2_image-2.0.4\include;$(SolutionDir)Depen\SDL2\include;$(ExecutablePath);$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Depen\SDL2_image-2.0.4\lib\$(PlatformTarget);$(SolutionDir)Depen\SDL2\lib\$(PlatformTarget);$(ExecutablePath);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)Exes\$(Configuration)</OutDir>
@@ -121,7 +121,7 @@
       <UseFullPaths>false</UseFullPaths>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>fmodL64_vc.lib;SDL2d.lib;SDL2maind.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>fmodL64_vc.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)Depen/lib</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
     </Link>

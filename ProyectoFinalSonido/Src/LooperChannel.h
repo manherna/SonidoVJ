@@ -1,6 +1,7 @@
 #pragma once
 #include <fmod.h>
 #include <fmod.hpp>
+
 class LooperChannel
 {
 	struct channelAttr
