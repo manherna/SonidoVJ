@@ -1,6 +1,7 @@
 #pragma once
 #include <fmod.h>
 #include <fmod.hpp>
+#include <SDL.h>
 
 class LooperChannel
 {
@@ -21,6 +22,7 @@ public:
 	void loadFile(const char * soundName, const bool & looping = false);
 	void playSound();
 	void pauseSound();
+	bool isPlaying();
 	short getChannelNumber();
 	float getPitch();
 	void setPitch(const float & p);
@@ -28,8 +30,10 @@ public:
 	bool getLooping();
 	float getVolume();
 	void setVolume(const float & v);
-	
 
+	//SDL
+	void setRectX(int n){ rect.x = n; }
+	SDL_Rect getRect(){ return rect; }
 
 private:
 	void setChannelAttributes(FMOD::Channel * ch);
@@ -38,6 +42,8 @@ private:
 	FMOD::Channel * _channel;
 	channelAttr _attr;
 	short _channelNo;
+
+	SDL_Rect rect;
 
 };
 

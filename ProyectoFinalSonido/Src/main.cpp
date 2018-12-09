@@ -30,7 +30,7 @@ int main(int argc, char *args[])
 		else
 		{
 			//Initialize renderer color
-			SDL_SetRenderDrawColor(Looper::renderer, 0xFF, 0x00, 0x00, 0xFF);
+			SDL_SetRenderDrawColor(Looper::renderer, 0x00, 0x30, 0x66, 0xFF);
 
 			//Initialize PNG loading
 			int imgFlags = IMG_INIT_PNG;

@@ -9,6 +9,11 @@ LooperChannel::LooperChannel(FMOD::System * syst, const short & channelNo): _sys
 	_attr.loop = false;
 	_attr.pitch = 1.0f;
 	_attr.volume = 1.0f;
+
+	rect.x = 0;
+	rect.y = 0;
+	rect.w = 100;
+	rect.h = 600;
 }
 
 LooperChannel::LooperChannel(FMOD::System * syst, const char * soundName, const short & channelNo): _system(syst), _channelNo(channelNo)
@@ -51,13 +56,6 @@ void LooperChannel::loadSound(FMOD::Sound * sound, const bool & looping)
 	@param looping: true si quieres que el sonido se reproduzca en loop infinito. false si no
 
 */
-void LooperChannel::loadSound(const char * soundName, const bool & looping)
-{
-	std::string buf("../Sounds/");
-	buf.append(soundName);
-	_system->createSound(buf.data(),NULL, 0, &_sound);
-	setLooping(looping);
-}
 
 void LooperChannel::loadFile(const char * path, const bool & looping)
 {
@@ -87,6 +85,14 @@ void LooperChannel::playSound()
 	}
 	setLooping(_attr.loop);
 }
+
+bool LooperChannel::isPlaying()
+{
+	bool isP;
+	_channel->isPlaying(&isP);
+	return isP;
+}
+
 short LooperChannel::getChannelNumber()
 {
 	return _channelNo;

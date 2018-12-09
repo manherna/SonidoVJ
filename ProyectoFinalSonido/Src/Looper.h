@@ -8,8 +8,10 @@
 #include <SDL_image.h>
 #include <stdio.h>
 #include <string>
+#include <iostream>
+#include <vector> 
 
-#define NUM_LOOPER_CHANNELS 9
+//#define NUM_LOOPER_CHANNELS 9
 
 enum EditMode { NOTHING, PLAY, STOP, LOOP, VOLUME, PITCH, FLANGER};
 
@@ -38,13 +40,15 @@ private:
 	void printHUD();
 
 	SDL_Texture* loadMedia(std::string path);
-	void render();
+	void render();	
 
-	char* dropped_filedir;
-	bool archivoCaido = false;
+	char* dropped_filedir;	
 
 	FMOD::System * _system;
-	LooperChannel * _channels[NUM_LOOPER_CHANNELS];
+	
+	//LooperChannel * _channels[numChannels];
+	std::vector<LooperChannel*> _channels;
+	int numChannels = 0;
 
 	EditMode _activeMode;
 	EditMode _lastActiveMode;
@@ -56,6 +60,7 @@ private:
 
 	//Images
 	SDL_Texture* emptySound;
-	SDL_Texture* fullSound;	
+	SDL_Texture* fullSound;
+	
 };
 

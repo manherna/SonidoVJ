@@ -33,37 +33,40 @@ bool Looper::init()
 		system("PAUSE");
 		return false;
 	}
-	for (int i = 0; i < NUM_LOOPER_CHANNELS; i++)
+	/*
+	for (int i = 0; i < _channels.size(); i++)
 	{
 		_channels[i] = new LooperChannel(_system, i);
-	}
+	}*/
 
 	_activeChannel = -1;
 
-	emptySound = loadMedia("../Images/pistaFull.png");
-	if (emptySound == NULL)
-	{
-		printf("Failed to load texture image!\n");		
-	}
+	emptySound = loadMedia("../Images/pistaVacia.png");
+
+	if (emptySound == NULL)	
+		printf("Failed to load emptySound texture\n");	
 	
-	//fullSound = loadMedia("../Images/pistaFull.png");
+	fullSound = loadMedia("../Images/pistaFull.png");
+
+	if (fullSound == NULL)
+		printf("Failed to load fullSound texture\n");
 		
 	/*
-	_channels[_activeChannel]->loadSound("hiphop.wav");
+	_channels[_activeChannel]->loadSound("../Sounds/hiphop.wav");
 	_activeChannel++;
-	_channels[_activeChannel]->loadSound("one.wav");
+	_channels[_activeChannel]->loadSound("../Sounds/one.wav");
 	_activeChannel++;
-	_channels[_activeChannel]->loadSound("t1.wav");
+	_channels[_activeChannel]->loadSound("../Sounds/t1.wav");
 	_activeChannel++;
-	_channels[_activeChannel]->loadSound("t2.wav");
+	_channels[_activeChannel]->loadSound("../Sounds/t2.wav");
 	_activeChannel++;
-	_channels[_activeChannel]->loadSound("t3.wav");
+	_channels[_activeChannel]->loadSound("../Sounds/t3.wav");
 	_activeChannel++;
-	_channels[_activeChannel]->loadSound("t4.wav");
+	_channels[_activeChannel]->loadSound("../Sounds/t4.wav");
 	_activeChannel++;
-	_channels[_activeChannel]->loadSound("uh.wav");
+	_channels[_activeChannel]->loadSound("../Sounds/uh.wav");
 	_activeChannel++;
-	_channels[_activeChannel]->loadSound("again.wav");
+	_channels[_activeChannel]->loadSound("../Sounds/again.wav");
 	_activeChannel = -1;
 	*/
 	return true;
@@ -100,7 +103,7 @@ SDL_Texture* Looper::loadMedia(std::string path)
 
 void Looper::release() {
 
-	for (int i = 0; i < NUM_LOOPER_CHANNELS; i++)delete _channels[i];
+	for (int i = 0; i < _channels.size(); i++)delete _channels[i];
 	FMOD_RESULT res;
 	res = _system->release();
 	try
@@ -116,16 +119,19 @@ void Looper::release() {
 }
 
 void Looper::render()
-{
-	//emptySound->clip_rect = { 0, 0, 100, 600 };
-	//SDL_BlitSurface(emptySound, NULL, screenSurface, NULL);
-	SDL_Rect destination;
-	destination.x = 100;
-	destination.y = 0;
-	destination.w = 100;
-	destination.w = 600;	
+{		
+	SDL_RenderClear(renderer);
+	SDL_Texture* aux = nullptr;
 
-	SDL_RenderCopy(renderer, emptySound, NULL, &destination);	
+	for (int i = 0; i < _channels.size(); i++)
+	{		
+		if (_channels[i]->isPlaying())aux = fullSound;
+		else aux = emptySound;
+
+		SDL_RenderCopy(renderer, aux, NULL, &_channels[i]->getRect());		
+	}
+	
+	SDL_RenderPresent(renderer);	
 }
 
 void Looper::processKeys()
@@ -220,7 +226,7 @@ void Looper::processState()
 
 void Looper::playChannel(const int & n)
 {
-	if (n < 0 || n> NUM_LOOPER_CHANNELS)
+	if (n < 0 || n> _channels.size())
 		throw new std::exception("CHANNEL NUMBER OUT OF CHANNEL INDEX");
 
 	_channels[n]->playSound();
@@ -242,9 +248,8 @@ void Looper::printHUD()
 	printf("L: LOOP MODE. Select a Channel and then L to toggle its loop state\n");
 	printf("Channels can be selected with numbers 1-8\n");
 	printf("-------------------------------------------------------------------\n");
-
-	if (archivoCaido)
-		printf("Loaded file: %s\n", dropped_filedir);
+	
+	printf("Loaded file: %s\n", dropped_filedir);
 
 }
 
@@ -252,22 +257,35 @@ void Looper::processDrop()
 {
 	SDL_Event e;
 	SDL_PollEvent(&e);
-	if (e.type == SDL_DROPFILE) {
-		dropped_filedir = e.drop.file;
 
-		archivoCaido = true;
+	if (e.type == SDL_DROPFILE) 
+	{
+		dropped_filedir = e.drop.file;
+		
 		//_activeChannel = 8;
-		_channels[_activeChannel]->loadFile(dropped_filedir);
+		/*
+		if (_channels[_activeChannel] != nullptr)
+			_channels[_activeChannel]->loadFile(dropped_filedir);
+		else{*/
+
+		LooperChannel* aux = new LooperChannel(_system, numChannels);
+		aux->loadFile(dropped_filedir);
+		aux->setRectX(numChannels * 100);
+		_channels.push_back(aux);	
+		numChannels++;
+			
+		//}
 	}
 }
 
-bool Looper::run() {
-	//system("CLS");
+bool Looper::run() 
+{
+	system("CLS");
 
-	render();
 	processKeys();
 	processDrop();
 	processState();
+	render();
 
 	FMOD_RESULT res = _system->update();
 	try
@@ -280,7 +298,7 @@ bool Looper::run() {
 		system("PAUSE");
 		return false;
 	}
-	//printHUD();
+	printHUD();
 	return true;
 }
 
