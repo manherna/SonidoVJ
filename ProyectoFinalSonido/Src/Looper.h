@@ -35,11 +35,12 @@ private:
 	void loadSound();
 	void processState();
 	void playChannel(const int &n);
-	void pauseChannel(const int & nc);
+	void togglePauseChannel(const int & nc);
 	void toggleLoopChannel(const int & n);
 	void printHUD();
+	void deleteSound(int n);
 
-	SDL_Texture* loadMedia(std::string path);
+	SDL_Texture* loadTexture(std::string path);
 	void render();	
 
 	char* dropped_filedir;	

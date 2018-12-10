@@ -21,6 +21,7 @@ public:
 	void loadSound(const char * soundName,const bool & looping = false);
 	void loadFile(const char * soundName, const bool & looping = false);
 	void playSound();
+	void stopSound();
 	void pauseSound();
 	bool isPlaying();
 	short getChannelNumber();

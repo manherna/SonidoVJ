@@ -46,7 +46,6 @@ void LooperChannel::loadSound(FMOD::Sound * sound, const bool & looping)
 	_sound = sound;
 
 	setLooping(looping);
-
 }
 
 
@@ -84,6 +83,20 @@ void LooperChannel::playSound()
 		
 	}
 	setLooping(_attr.loop);
+}
+
+void LooperChannel::pauseSound()
+{
+	bool aux;
+	_channel->getPaused(&aux);
+
+	aux = !aux;
+	_channel->setPaused(aux);
+}
+
+void LooperChannel::stopSound()
+{
+	_channel->stop();
 }
 
 bool LooperChannel::isPlaying()

@@ -18,13 +18,43 @@ Looper::~Looper() {
 
 bool Looper::init()
 {
+	//SLD Window and libraries
+
+	//Create window
+	window = SDL_CreateWindow("Looper", 300, 300, WIN_WIDTH, WIN_HEIGHT, SDL_WINDOW_SHOWN);
+	if (window == NULL)
+	{
+		printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
+	}
+	else
+	{
+		//Create renderer for window
+		renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+		if (renderer == NULL)
+		{
+			printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
+		}
+		else
+		{
+			//Initialize renderer color
+			SDL_SetRenderDrawColor(renderer, 0x00, 0x30, 0x66, 0xFF);
+
+			//Initialize PNG loading
+			int imgFlags = IMG_INIT_PNG;
+			if (!(IMG_Init(imgFlags) & imgFlags))
+			{
+				printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
+			}
+		}
+	}
+
+	//FMOD
 	FMOD_RESULT res;
 	try {
 		res = System_Create(&_system);
 		ERRCHECK(res);
 		res = _system->init(128, FMOD_INIT_NORMAL, 0);
 		ERRCHECK(res);
-
 
 		//TODO: REMOVE THIS. DEBUG PURPOSE ONLY
 	}
@@ -33,23 +63,14 @@ bool Looper::init()
 		system("PAUSE");
 		return false;
 	}
-	/*
-	for (int i = 0; i < _channels.size(); i++)
-	{
-		_channels[i] = new LooperChannel(_system, i);
-	}*/
-
 	_activeChannel = -1;
 
-	emptySound = loadMedia("../Images/pistaVacia.png");
+	//Carga de texturas
+	emptySound = loadTexture("../Images/pistaVacia.png");
+	fullSound = loadTexture("../Images/pistaFull.png");
 
-	if (emptySound == NULL)	
-		printf("Failed to load emptySound texture\n");	
-	
-	fullSound = loadMedia("../Images/pistaFull.png");
-
-	if (fullSound == NULL)
-		printf("Failed to load fullSound texture\n");
+	if (emptySound == NULL || fullSound == NULL)
+		printf("Failed loading textures\n");
 		
 	/*
 	_channels[_activeChannel]->loadSound("../Sounds/hiphop.wav");
@@ -70,11 +91,9 @@ bool Looper::init()
 	_activeChannel = -1;
 	*/
 	return true;
-
-
 }
 
-SDL_Texture* Looper::loadMedia(std::string path)
+SDL_Texture* Looper::loadTexture(std::string path)
 {
 	//The final texture
 	SDL_Texture* newTexture = NULL;
@@ -116,6 +135,7 @@ void Looper::release() {
 		system("PAUSE");
 		return;
 	}
+	//TODO: Release SDL
 }
 
 void Looper::render()
@@ -123,11 +143,13 @@ void Looper::render()
 	SDL_RenderClear(renderer);
 	SDL_Texture* aux = nullptr;
 
+	//En funcion del estado de la pista, la textura sera "full" o "empty"
 	for (int i = 0; i < _channels.size(); i++)
 	{		
 		if (_channels[i]->isPlaying())aux = fullSound;
 		else aux = emptySound;
 
+		_channels[i]->setRectX(i*100); //Para que se coloquen segun su indice
 		SDL_RenderCopy(renderer, aux, NULL, &_channels[i]->getRect());		
 	}
 	
@@ -194,15 +216,38 @@ void Looper::processKeys()
 		case (SDLK_n) :
 			_lastActiveMode = _activeMode;
 			_activeMode = NOTHING;
+			break;
 		case(SDLK_SPACE) :
 			_lastActiveMode = _activeMode;
 			_activeMode = NOTHING;
 			_activeChannel = -1;
+			break;
+		case (SDLK_r) :
+			deleteSound(_activeChannel);
+			numChannels--;
+			_activeMode = NOTHING; //Para que no afecte el modo activo al nuevo index del looper			
+			break;
 		default:
 			_keypressed = false;
 			break;
 		}
 	}
+}
+
+void Looper::deleteSound(int n)
+{		
+	_channels[n]->stopSound();
+	_channels[n] = nullptr;
+	delete _channels[n];
+
+	std::vector<LooperChannel*> vectorAux;
+	for (int i = 0; i < _channels.size(); i++)
+	{
+		if (_channels[i] != nullptr)
+			vectorAux.push_back(_channels[i]);
+	}
+	_channels.clear();
+	_channels = vectorAux;		
 }
 
 void Looper::processState()
@@ -212,6 +257,10 @@ void Looper::processState()
 	{
 	case(PLAY) :
 		playChannel(_activeChannel);
+		break;
+
+	case(STOP) :
+		togglePauseChannel(_activeChannel);
 		break;
 
 		//TODO:CASE(STOP)
@@ -230,6 +279,14 @@ void Looper::playChannel(const int & n)
 		throw new std::exception("CHANNEL NUMBER OUT OF CHANNEL INDEX");
 
 	_channels[n]->playSound();
+}
+
+void Looper::togglePauseChannel(const int & n)
+{
+	if (n < 0 || n> _channels.size())
+		throw new std::exception("CHANNEL NUMBER OUT OF CHANNEL INDEX");
+
+	_channels[n]->pauseSound();
 }
 
 void Looper::toggleLoopChannel(const int & n)
@@ -269,8 +326,7 @@ void Looper::processDrop()
 		else{*/
 
 		LooperChannel* aux = new LooperChannel(_system, numChannels);
-		aux->loadFile(dropped_filedir);
-		aux->setRectX(numChannels * 100);
+		aux->loadFile(dropped_filedir);		
 		_channels.push_back(aux);	
 		numChannels++;
 			
