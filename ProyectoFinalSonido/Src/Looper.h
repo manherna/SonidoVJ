@@ -64,6 +64,9 @@ private:
 	//Images
 	SDL_Texture* emptySound;
 	SDL_Texture* fullSound;
+	SDL_Texture* selector;
+
+	SDL_Rect selecPos;
 
 };
 

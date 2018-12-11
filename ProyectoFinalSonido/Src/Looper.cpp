@@ -66,6 +66,8 @@ bool Looper::init()
 	//Carga de texturas
 	emptySound = loadTexture("../Images/pistaVacia.png");
 	fullSound = loadTexture("../Images/pistaFull.png");
+	selector = loadTexture("../Images/seleccion.png");
+	selecPos = {-100, 0, 100, 600 };
 
 	if (emptySound == NULL || fullSound == NULL)
 		printf("Failed loading textures\n");
@@ -131,7 +133,14 @@ SDL_Texture* Looper::loadTexture(std::string path)
 
 void Looper::release() {
 
-	for (int i = 0; i < _channels.size(); i++)delete _channels[i];
+	for (int i = 0; i < _channels.size(); i++)
+		delete _channels[i];
+
+	_channels.clear();
+	delete emptySound;
+	delete fullSound;
+	delete selector;
+
 	FMOD_RESULT res;
 	res = _system->release();
 	try
@@ -143,24 +152,26 @@ void Looper::release() {
 		std::cout << "Exception on release: " << e.what() << std::endl;
 		system("STOP");
 		return;
-	}
-	//TODO: Release SDL
+	}	
 }
 
 void Looper::render()
 {		
 	SDL_RenderClear(renderer);
 	SDL_Texture* aux = nullptr;
+	selecPos.x = _activeChannel * 100;
 
 	//En funcion del estado de la pista, la textura sera "full" o "empty"
 	for (int i = 0; i < _channels.size(); i++)
 	{		
-		if (_channels[i]->isPlaying())aux = fullSound;
+		if (_channels[i]->isPlaying()) aux = fullSound;
 		else aux = emptySound;
 
 		_channels[i]->setRectX(i*100); //Para que se coloquen segun su indice
 		SDL_RenderCopy(renderer, aux, NULL, &_channels[i]->getRect());		
 	}
+
+	SDL_RenderCopy(renderer, selector, NULL, &selecPos);
 	
 	SDL_RenderPresent(renderer);	
 }
@@ -246,6 +257,10 @@ void Looper::processKeys()
 			deleteSound(_activeChannel);
 			numChannels--;
 			_activeMode = NOTHING; //Para que no afecte el modo activo al nuevo index del looper			
+			break;
+		case(SDLK_ESCAPE) :
+			release();
+			exit(-1);
 			break;
 		default:
 			_keypressed = false;
