@@ -28,6 +28,7 @@ LooperChannel::LooperChannel(FMOD::System * syst, const char * soundName, const 
 	_attr.volume = 1.0f;
 
 	_system->createSound(buf.data(), FMOD_LOOP_OFF, 0, &_sound);
+	_system->playSound(_sound, NULL, true, &_channel);
 }
 
 LooperChannel::~LooperChannel()
@@ -85,6 +86,7 @@ void LooperChannel::playSound()
 	setLooping(_attr.loop);
 }
 
+
 void LooperChannel::pauseSound()
 {
 	bool aux;
@@ -101,9 +103,10 @@ void LooperChannel::stopSound()
 
 bool LooperChannel::isPlaying()
 {
-	bool isP;
-	_channel->isPlaying(&isP);
-	return isP;
+	bool playing = false;
+	if(_channel != nullptr)
+		_channel->isPlaying(&playing);
+	return playing;
 }
 
 short LooperChannel::getChannelNumber()
@@ -113,6 +116,7 @@ short LooperChannel::getChannelNumber()
 
 float LooperChannel::getPitch()
 {
+	_channel->getPitch(&_attr.pitch);
 	return _attr.pitch;
 }
 
@@ -120,6 +124,8 @@ void LooperChannel::setPitch(const float & p)
 {
 	if(p >= 0)
 		_attr.pitch = p;
+
+	setChannelAttributes(_channel);
 }
 
 void LooperChannel::setLooping(const bool &lp)
@@ -134,6 +140,21 @@ void LooperChannel::setLooping(const bool &lp)
 bool LooperChannel::getLooping()
 {
 	return _attr.loop;
+}
+
+float LooperChannel::getVolume()
+{
+	float vol = 0.0f;
+	if(isPlaying())
+	_channel->getVolume(&vol);
+
+	return vol;
+}
+
+void LooperChannel::setVolume(const float & v)
+{
+	_attr.volume = v;
+	_channel->setVolume(v);
 }
 
 void LooperChannel::setChannelAttributes(FMOD::Channel * ch)

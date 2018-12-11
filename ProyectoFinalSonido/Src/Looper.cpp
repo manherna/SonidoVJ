@@ -54,13 +54,11 @@ bool Looper::init()
 		res = System_Create(&_system);
 		ERRCHECK(res);
 		res = _system->init(128, FMOD_INIT_NORMAL, 0);
-		ERRCHECK(res);
-
-		//TODO: REMOVE THIS. DEBUG PURPOSE ONLY
+		ERRCHECK(res);		
 	}
 	catch (std::exception & e){
 		std::cout << "An exception has ocurred: " << e.what() << std::endl;
-		system("PAUSE");
+		system("STOP");
 		return false;
 	}
 	_activeChannel = -1;
@@ -85,11 +83,22 @@ bool Looper::init()
 	_activeChannel++;
 	_channels[_activeChannel]->loadSound("../Sounds/t4.wav");
 	_activeChannel++;
+
 	_channels[_activeChannel]->loadSound("../Sounds/uh.wav");
 	_activeChannel++;
 	_channels[_activeChannel]->loadSound("../Sounds/again.wav");
 	_activeChannel = -1;
 	*/
+
+	//_channels[_activeChannel]->loadSound("again.wav");
+	_activeChannel = 0;
+	
+	
+	_activeMode = NOTHING;
+	_lastActiveMode = NOTHING;
+	_addMode = NOADD;
+	_lastAddMode = NOADD;
+
 	return true;
 }
 
@@ -132,7 +141,7 @@ void Looper::release() {
 	catch (const std::exception& e)
 	{
 		std::cout << "Exception on release: " << e.what() << std::endl;
-		system("PAUSE");
+		system("STOP");
 		return;
 	}
 	//TODO: Release SDL
@@ -209,7 +218,18 @@ void Looper::processKeys()
 			_lastActiveMode = _activeMode;
 			_activeMode = VOLUME;
 			break;
-		case (SDLK_l) :
+		case(SDLK_PLUS):
+			_lastAddMode = _addMode;
+			_addMode = ADD;
+			break;
+		case(SDLK_MINUS):
+			_lastAddMode = _addMode;
+			_addMode = REMOVE;
+			break;
+
+		//This cases are to clean the channel and
+		//State selection
+		case (SDLK_l):
 			_lastActiveMode = _activeMode;
 			_activeMode = LOOP;
 			break;
@@ -217,7 +237,7 @@ void Looper::processKeys()
 			_lastActiveMode = _activeMode;
 			_activeMode = NOTHING;
 			break;
-		case(SDLK_SPACE) :
+		case(SDLK_SPACE):
 			_lastActiveMode = _activeMode;
 			_activeMode = NOTHING;
 			_activeChannel = -1;
@@ -236,10 +256,13 @@ void Looper::processKeys()
 
 void Looper::deleteSound(int n)
 {		
-	_channels[n]->stopSound();
-	_channels[n] = nullptr;
+	/*_channels[n]->stopSound();	
 	delete _channels[n];
-
+	_channels[n] = nullptr;*/
+	
+	_channels[n]->stopSound();
+	_channels.erase(_channels.begin() + n - 1);
+	/*
 	std::vector<LooperChannel*> vectorAux;
 	for (int i = 0; i < _channels.size(); i++)
 	{
@@ -248,6 +271,7 @@ void Looper::deleteSound(int n)
 	}
 	_channels.clear();
 	_channels = vectorAux;		
+	*/
 }
 
 void Looper::processState()
@@ -258,19 +282,29 @@ void Looper::processState()
 	case(PLAY) :
 		playChannel(_activeChannel);
 		break;
-
 	case(STOP) :
 		togglePauseChannel(_activeChannel);
+		//pauseChannel(_activeChannel); //Diseño
 		break;
-
-		//TODO:CASE(STOP)
-	case(LOOP) :
+	case(LOOP):
 		toggleLoopChannel(_activeChannel);
 		break;
+	case(VOLUME):
+		if (_lastAddMode != _addMode)
+			if (_addMode == ADD) 
+				_channels[_activeChannel]->setVolume(_channels[_activeChannel]->getVolume() + 0.1f);
+			else if(_addMode = REMOVE)
+				_channels[_activeChannel]->setVolume(_channels[_activeChannel]->getVolume() - 0.1f);
+		_addMode = NOADD;
+	case(PITCH):
+		if (_lastAddMode != _addMode)
+			if (_addMode == ADD)
+				_channels[_activeChannel]->setPitch(_channels[_activeChannel]->getPitch() + 0.1f);
+			else if (_addMode = REMOVE)
+				_channels[_activeChannel]->setPitch(_channels[_activeChannel]->getPitch() - 0.1f);
+		_addMode = NOADD;
 	}
-
 	_keypressed = false;
-
 }
 
 void Looper::playChannel(const int & n)
@@ -289,6 +323,11 @@ void Looper::togglePauseChannel(const int & n)
 	_channels[n]->pauseSound();
 }
 
+void Looper::pauseChannel(const int & nc)
+{
+	_channels[nc]->pauseSound();
+}
+
 void Looper::toggleLoopChannel(const int & n)
 {
 	_channels[n]->setLooping(!_channels[n]->getLooping());
@@ -298,16 +337,21 @@ void Looper::printHUD()
 {
 	printf("Active Mode: %d\n", _activeMode);
 	printf("Active Channel %d\n", _activeChannel);
-	printf("-------------------------------------------------------------------\n");
+	if (_activeChannel >= 0 && _activeChannel < _channels.size()) {
+		printf("Active Channel volume %f\n", _channels[_activeChannel]->getVolume());
+		printf("Active Channel pitch %f\n", _channels[_activeChannel]->getPitch());
+	}
+		printf("-------------------------------------------------------------------\n");
 	printf("Channels can be selected with numbers 1-8\n");
 	printf("LOOPER MODES:\n");
 	printf("P: PLAY MODE. Select a Channel and then P to play it\n");
 	printf("L: LOOP MODE. Select a Channel and then L to toggle its loop state\n");
+	printf("S: STOP MODE. Select a Channel and then P to stop a sound from playing\n");
+	
 	printf("Channels can be selected with numbers 1-8\n");
 	printf("-------------------------------------------------------------------\n");
 	
 	printf("Loaded file: %s\n", dropped_filedir);
-
 }
 
 void Looper::processDrop()
@@ -351,7 +395,7 @@ bool Looper::run()
 	catch (const std::exception& e)
 	{
 		std::cout << "An exception has ocurred in run(): " << e.what() << std::endl;
-		system("PAUSE");
+		system("STOP");
 		return false;
 	}
 	printHUD();

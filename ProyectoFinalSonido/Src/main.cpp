@@ -11,8 +11,8 @@ int main(int argc, char *args[])
 	if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) ==-1)
 		return  -1;
 
-	Looper * looper = new Looper();		
-	
+	Looper * looper = new Looper();
+
 	if (!looper->init())exit(-1);
 	while (looper->run());
 	looper->release();

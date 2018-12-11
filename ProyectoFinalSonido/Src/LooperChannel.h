@@ -3,6 +3,8 @@
 #include <fmod.hpp>
 #include <SDL.h>
 
+class Ligma;
+
 class LooperChannel
 {
 	struct channelAttr
@@ -10,6 +12,7 @@ class LooperChannel
 		float volume;
 		float pitch;
 		bool loop;
+		Ligma * balls;
 	};
 
 public:

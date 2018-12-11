@@ -15,7 +15,10 @@
 
 enum EditMode { NOTHING, PLAY, STOP, LOOP, VOLUME, PITCH, FLANGER};
 
-class Looper {	
+enum addMode {NOADD, ADD, REMOVE};
+
+class Looper {
+
 public:
 	static const int WIN_HEIGHT = 600;
 	static const int WIN_WIDTH = 800;	
@@ -36,6 +39,7 @@ private:
 	void processState();
 	void playChannel(const int &n);
 	void togglePauseChannel(const int & nc);
+	void pauseChannel(const int & nc);
 	void toggleLoopChannel(const int & n);
 	void printHUD();
 	void deleteSound(int n);
@@ -53,15 +57,14 @@ private:
 
 	EditMode _activeMode;
 	EditMode _lastActiveMode;
+	addMode _lastAddMode;
+	addMode _addMode;
 	short _activeChannel;
 	bool _keypressed;
-
-	//TODO: REMOVE THIS. DEBUG PURPOSE ONLY
-	FMOD::Sound *_sound;	
 
 	//Images
 	SDL_Texture* emptySound;
 	SDL_Texture* fullSound;
-	
+
 };
 
