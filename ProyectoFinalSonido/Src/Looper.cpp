@@ -21,7 +21,7 @@ bool Looper::init()
 	//SLD Window and libraries
 
 	//Create window
-	window = SDL_CreateWindow("Looper", 300, 300, WIN_WIDTH, WIN_HEIGHT, SDL_WINDOW_SHOWN);
+	window = SDL_CreateWindow("Looper", 450, 175, WIN_WIDTH, WIN_HEIGHT, SDL_WINDOW_SHOWN);
 	if (window == NULL)
 	{
 		printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
@@ -37,13 +37,19 @@ bool Looper::init()
 		else
 		{
 			//Initialize renderer color
-			SDL_SetRenderDrawColor(renderer, 0x00, 0x30, 0x66, 0xFF);
+			SDL_SetRenderDrawColor(renderer, 0x00, 0x30, 0x66, 0xFF);			
 
 			//Initialize PNG loading
 			int imgFlags = IMG_INIT_PNG;
 			if (!(IMG_Init(imgFlags) & imgFlags))
 			{
 				printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
+			}
+
+			//Initialize SDL_ttf
+			if (TTF_Init() == -1)
+			{
+				printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());				
 			}
 		}
 	}
@@ -69,9 +75,8 @@ bool Looper::init()
 	selector = loadTexture("../Images/seleccion.png");
 	selecPos = {-100, 0, 100, 600 };
 
-	if (emptySound == NULL || fullSound == NULL)
-		printf("Failed loading textures\n");
-		
+	if (emptySound == NULL || fullSound == NULL || selector)
+		printf("Failed loading textures\n");		
 	/*
 	_channels[_activeChannel]->loadSound("../Sounds/hiphop.wav");
 	_activeChannel++;
@@ -92,7 +97,7 @@ bool Looper::init()
 	_activeChannel = -1;
 	*/
 
-	//_channels[_activeChannel]->loadSound("again.wav");
+	//_channels[_activeChannel]->loadSound("../Sounds/again.wav");
 	_activeChannel = 0;
 	
 	
@@ -172,6 +177,9 @@ void Looper::render()
 	}
 
 	SDL_RenderCopy(renderer, selector, NULL, &selecPos);
+
+	loadFont("Pista activa: " + std::to_string(_activeChannel + 1));
+	SDL_RenderCopy(renderer, textFont, NULL, &textPos);
 	
 	SDL_RenderPresent(renderer);	
 }
@@ -368,7 +376,7 @@ void Looper::processDrop()
 
 bool Looper::run() 
 {
-	system("CLS");
+	//system("CLS");
 
 	processKeys();
 	processDrop();
@@ -386,7 +394,51 @@ bool Looper::run()
 		system("STOP");
 		return false;
 	}
-	printHUD();
+	//printHUD();
 	return true;
 }
 
+bool Looper::loadFromRenderedText(std::string textureText, SDL_Color textColor)
+{	
+	//Render text surface
+	SDL_Surface* textSurface = TTF_RenderText_Solid(gFont, textureText.c_str(), textColor);
+	if (textSurface == NULL)
+	{
+		printf("Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError());
+	}
+	else
+	{
+		//Create texture from surface pixels
+		textFont = SDL_CreateTextureFromSurface(renderer, textSurface);
+		if (textFont == NULL)
+		{
+			printf("Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError());
+		}
+		else
+		{
+			//Get image dimensions			
+			textPos = { 25, 620, textSurface->w, textSurface->h };
+		}
+
+		//Get rid of old surface
+		SDL_FreeSurface(textSurface);
+	}
+
+	//Return success
+	return textFont != NULL;
+}
+
+void Looper::loadFont(std::string text)
+{
+	//Open the font
+	gFont = TTF_OpenFont("../Fonts/arial.ttf", 14);
+	if (gFont == NULL)
+		printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
+	else
+	{
+		//Render text
+		SDL_Color textColor = { 255, 255, 255 };
+		if (!loadFromRenderedText(text.c_str(), textColor))
+			printf("Failed to render text texture!\n");
+	}
+}

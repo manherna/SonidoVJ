@@ -6,6 +6,7 @@
 
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
 #include <stdio.h>
 #include <string>
 #include <iostream>
@@ -20,8 +21,8 @@ enum addMode {NOADD, ADD, REMOVE};
 class Looper {
 
 public:
-	static const int WIN_HEIGHT = 600;
-	static const int WIN_WIDTH = 800;	
+	static const int WIN_HEIGHT = 680;
+	static const int WIN_WIDTH = 900;	
 	static SDL_Renderer* renderer;
 	static SDL_Window * window;
 
@@ -43,8 +44,11 @@ private:
 	void printHUD();
 	void deleteSound(int n);
 
+	void loadFont(std::string text);
 	SDL_Texture* loadTexture(std::string path);
 	void render();	
+
+	bool loadFromRenderedText(std::string textureText, SDL_Color textColor);
 
 	char* dropped_filedir;	
 
@@ -66,7 +70,14 @@ private:
 	SDL_Texture* fullSound;
 	SDL_Texture* selector;
 
+	//Selector
 	SDL_Rect selecPos;
+
+	//Font
+	TTF_Font *gFont = NULL; //Arial
+	//std::vector<SDL_Texture*> textos;
+	SDL_Texture* textFont;
+	SDL_Rect textPos;	
 
 };
 
