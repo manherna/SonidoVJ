@@ -7,7 +7,7 @@
 #define NUM_LOOPER_CHANNELS 9
 
 enum EditMode { NOTHING, PLAY, STOP, LOOP, VOLUME, PITCH, FLANGER};
-
+enum addMode {NOADD, ADD, REMOVE};
 class Looper {
 public:
 	Looper();
@@ -35,14 +35,9 @@ private:
 
 	EditMode _activeMode;
 	EditMode _lastActiveMode;
+	addMode _lastAddMode;
+	addMode _addMode;
 	short _activeChannel;
 	bool _keypressed;
-
-	//TODO: REMOVE THIS. DEBUG PURPOSE ONLY
-	FMOD::Sound *_sound;
-	FMOD::Sound *_snd2;
-
-	FMOD::Channel *_channel;
-	FMOD::Channel *_channel2;
 };
 

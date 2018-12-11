@@ -1,6 +1,7 @@
 #pragma once
 #include <fmod.h>
 #include <fmod.hpp>
+class Ligma;
 class LooperChannel
 {
 	struct channelAttr
@@ -8,6 +9,7 @@ class LooperChannel
 		float volume;
 		float pitch;
 		bool loop;
+		Ligma * balls;
 	};
 
 public:
@@ -20,6 +22,7 @@ public:
 	void loadFile(const char * soundName, const bool & looping = false);
 	void playSound();
 	void pauseSound();
+	bool isPlaying();
 	short getChannelNumber();
 	float getPitch();
 	void setPitch(const float & p);

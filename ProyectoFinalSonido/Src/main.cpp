@@ -13,7 +13,7 @@ int main(int argc, char *args[])
 	if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) ==-1)
 		return  -1;
 
-	SDL_Window * z = SDL_CreateWindow("Looper", 300, 300, 300, 300, 0);
+	SDL_Window * z = SDL_CreateWindow("bn", 300, 300, 300, 300, 0);
 
 	Looper * looper = new Looper();
 	if (!looper->init())exit(-1);
