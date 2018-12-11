@@ -37,8 +37,7 @@ private:
 	void processDrop();
 	void loadSound();
 	void processState();
-	void playChannel(const int &n);
-	void togglePauseChannel(const int & nc);
+	void playChannel(const int &n);	
 	void pauseChannel(const int & nc);
 	void toggleLoopChannel(const int & n);
 	void printHUD();

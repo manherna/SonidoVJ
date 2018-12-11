@@ -255,23 +255,9 @@ void Looper::processKeys()
 }
 
 void Looper::deleteSound(int n)
-{		
-	/*_channels[n]->stopSound();	
-	delete _channels[n];
-	_channels[n] = nullptr;*/
-	
+{	
 	_channels[n]->stopSound();
-	_channels.erase(_channels.begin() + n - 1);
-	/*
-	std::vector<LooperChannel*> vectorAux;
-	for (int i = 0; i < _channels.size(); i++)
-	{
-		if (_channels[i] != nullptr)
-			vectorAux.push_back(_channels[i]);
-	}
-	_channels.clear();
-	_channels = vectorAux;		
-	*/
+	_channels.erase(_channels.begin() + n );	
 }
 
 void Looper::processState()
@@ -280,14 +266,16 @@ void Looper::processState()
 	switch (_activeMode)
 	{
 	case(PLAY) :
-		playChannel(_activeChannel);
+		if (_activeChannel < _channels.size() && _channels[_activeChannel])
+			playChannel(_activeChannel);
 		break;
-	case(STOP) :
-		togglePauseChannel(_activeChannel);
-		//pauseChannel(_activeChannel); //Diseño
+	case(STOP) :	
+		if (_activeChannel < _channels.size() && _channels[_activeChannel])
+			pauseChannel(_activeChannel);
 		break;
 	case(LOOP):
-		toggleLoopChannel(_activeChannel);
+		if (_activeChannel < _channels.size() && _channels[_activeChannel])
+			toggleLoopChannel(_activeChannel);
 		break;
 	case(VOLUME):
 		if (_lastAddMode != _addMode)
@@ -309,18 +297,11 @@ void Looper::processState()
 
 void Looper::playChannel(const int & n)
 {
-	if (n < 0 || n> _channels.size())
+	if (n < 0 || n > _channels.size())
 		throw new std::exception("CHANNEL NUMBER OUT OF CHANNEL INDEX");
 
-	_channels[n]->playSound();
-}
-
-void Looper::togglePauseChannel(const int & n)
-{
-	if (n < 0 || n> _channels.size())
-		throw new std::exception("CHANNEL NUMBER OUT OF CHANNEL INDEX");
-
-	_channels[n]->pauseSound();
+	if (_channels[n] != nullptr)
+		_channels[n]->playSound();
 }
 
 void Looper::pauseChannel(const int & nc)
@@ -361,20 +342,12 @@ void Looper::processDrop()
 
 	if (e.type == SDL_DROPFILE) 
 	{
-		dropped_filedir = e.drop.file;
-		
-		//_activeChannel = 8;
-		/*
-		if (_channels[_activeChannel] != nullptr)
-			_channels[_activeChannel]->loadFile(dropped_filedir);
-		else{*/
+		dropped_filedir = e.drop.file;			
 
 		LooperChannel* aux = new LooperChannel(_system, numChannels);
 		aux->loadFile(dropped_filedir);		
 		_channels.push_back(aux);	
-		numChannels++;
-			
-		//}
+		numChannels++;		
 	}
 }
 
