@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 //SDL_Surface* Looper::screenSurface = NULL;
-SDL_Renderer* Looper::renderer = NULL;
+//SDL_Renderer* Looper::renderer = NULL;
 SDL_Window* Looper::window = NULL;
 
 Looper::Looper() {
@@ -75,8 +75,21 @@ bool Looper::init()
 	selector = loadTexture("../Images/seleccion.png");
 	selecPos = {-100, 0, 100, 600 };
 
-	if (emptySound == NULL || fullSound == NULL || selector)
-		printf("Failed loading textures\n");		
+	if (emptySound == NULL || fullSound == NULL || selector == NULL)
+		printf("Failed loading textures\n");	
+
+	//Es una mierda tener que pasarle el renderer en todas las llamadas, pero pasandoselo en la constructora
+	//y almacenandolo como atributo me dice que el renderer no es bueno
+
+	Texto* aux = new Texto("Text1", renderer);
+	aux->setPosition(30, 636);
+	textos.push_back(aux);
+
+	aux = new Texto("Text2", renderer);
+	aux->setPosition(30, 652);
+	textos.push_back(aux);
+	
+
 	/*
 	_channels[_activeChannel]->loadSound("../Sounds/hiphop.wav");
 	_activeChannel++;
@@ -98,8 +111,7 @@ bool Looper::init()
 	*/
 
 	//_channels[_activeChannel]->loadSound("../Sounds/again.wav");
-	_activeChannel = 0;
-	
+	_activeChannel = 0;	
 	
 	_activeMode = NOTHING;
 	_lastActiveMode = NOTHING;
@@ -160,11 +172,43 @@ void Looper::release() {
 	}	
 }
 
+std::string Looper::getActiveMode()
+{
+	switch (_activeMode)
+	{
+	case NOTHING:
+		return "Null";
+		break;
+	case PLAY:
+		return "Play";
+		break;
+	case STOP:
+		return "Pause";
+		break;
+	case LOOP:
+		return "Loop";
+		break;
+	case VOLUME:
+		return "Volume";
+		break;
+	case PITCH:
+		return "Pitch";
+		break;
+	case FLANGER:
+		return "Flanger";
+		break;
+	default:	
+		return "yay";
+		break;
+	}
+}
+
 void Looper::render()
 {		
 	SDL_RenderClear(renderer);
+
 	SDL_Texture* aux = nullptr;
-	selecPos.x = _activeChannel * 100;
+	selecPos.x = _activeChannel * 100; //Selector
 
 	//En funcion del estado de la pista, la textura sera "full" o "empty"
 	for (int i = 0; i < _channels.size(); i++)
@@ -176,10 +220,23 @@ void Looper::render()
 		SDL_RenderCopy(renderer, aux, NULL, &_channels[i]->getRect());		
 	}
 
+	//Selector pista activa
 	SDL_RenderCopy(renderer, selector, NULL, &selecPos);
 
-	loadFont("Pista activa: " + std::to_string(_activeChannel + 1));
-	SDL_RenderCopy(renderer, textFont, NULL, &textPos);
+	//Textos	
+	std::string activetext = getActiveMode();	
+	
+	textos[0]->setString("Active Mode: " + activetext, renderer);	
+
+	short volumen = 0;	
+	if (_activeChannel < _channels.size() && _channels[_activeChannel])
+		volumen = _channels[_activeChannel]->getVolume()*100;
+
+	textos[1]->setString("Active Channel volume: " + std::to_string(volumen), renderer);
+	
+	for (int i = 0; i < textos.size(); i++){
+		SDL_RenderCopy(renderer, textos[i]->getTexture(), NULL, &textos[i]->getRect());
+	}
 	
 	SDL_RenderPresent(renderer);	
 }
@@ -376,7 +433,9 @@ void Looper::processDrop()
 
 bool Looper::run() 
 {
-	//system("CLS");
+#if Debug
+	system("CLS");
+#endif
 
 	processKeys();
 	processDrop();
@@ -394,51 +453,12 @@ bool Looper::run()
 		system("STOP");
 		return false;
 	}
-	//printHUD();
+#if Debug
+	printHUD();
+#endif
 	return true;
 }
 
-bool Looper::loadFromRenderedText(std::string textureText, SDL_Color textColor)
-{	
-	//Render text surface
-	SDL_Surface* textSurface = TTF_RenderText_Solid(gFont, textureText.c_str(), textColor);
-	if (textSurface == NULL)
-	{
-		printf("Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError());
-	}
-	else
-	{
-		//Create texture from surface pixels
-		textFont = SDL_CreateTextureFromSurface(renderer, textSurface);
-		if (textFont == NULL)
-		{
-			printf("Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError());
-		}
-		else
-		{
-			//Get image dimensions			
-			textPos = { 25, 620, textSurface->w, textSurface->h };
-		}
 
-		//Get rid of old surface
-		SDL_FreeSurface(textSurface);
-	}
 
-	//Return success
-	return textFont != NULL;
-}
 
-void Looper::loadFont(std::string text)
-{
-	//Open the font
-	gFont = TTF_OpenFont("../Fonts/arial.ttf", 14);
-	if (gFont == NULL)
-		printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
-	else
-	{
-		//Render text
-		SDL_Color textColor = { 255, 255, 255 };
-		if (!loadFromRenderedText(text.c_str(), textColor))
-			printf("Failed to render text texture!\n");
-	}
-}

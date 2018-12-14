@@ -22,10 +22,12 @@
     <ClCompile Include="..\Src\Looper.cpp" />
     <ClCompile Include="..\Src\LooperChannel.cpp" />
     <ClCompile Include="..\Src\main.cpp" />
+    <ClCompile Include="..\Src\Texto.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Src\Looper.h" />
     <ClInclude Include="..\Src\LooperChannel.h" />
+    <ClInclude Include="..\Src\Texto.h" />
     <ClInclude Include="..\Src\Utilities.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

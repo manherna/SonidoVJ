@@ -12,6 +12,8 @@
 #include <iostream>
 #include <vector> 
 
+#include "Texto.h"
+
 //#define NUM_LOOPER_CHANNELS 9
 
 enum EditMode { NOTHING, PLAY, STOP, LOOP, VOLUME, PITCH, FLANGER};
@@ -23,8 +25,9 @@ class Looper {
 public:
 	static const int WIN_HEIGHT = 680;
 	static const int WIN_WIDTH = 900;	
-	static SDL_Renderer* renderer;
+	SDL_Renderer* renderer;
 	static SDL_Window * window;
+	//static 
 
 	Looper();
 	~Looper();
@@ -43,20 +46,13 @@ private:
 	void toggleLoopChannel(const int & n);
 	void printHUD();
 	void deleteSound(int n);
-
-	void loadFont(std::string text);
+	//Textures
 	SDL_Texture* loadTexture(std::string path);
-	void render();	
+	void render();
+	std::string getActiveMode();
 
-	bool loadFromRenderedText(std::string textureText, SDL_Color textColor);
-
-	char* dropped_filedir;	
-
-	FMOD::System * _system;
-	
-	//LooperChannel * _channels[numChannels];
-	std::vector<LooperChannel*> _channels;
-	int numChannels = 0;
+	//Sound
+	FMOD::System * _system;	
 
 	EditMode _activeMode;
 	EditMode _lastActiveMode;
@@ -64,6 +60,12 @@ private:
 	addMode _addMode;
 	short _activeChannel;
 	bool _keypressed;
+
+	std::vector<LooperChannel*> _channels;
+	int numChannels = 0;
+
+	//Drag and drop
+	char* dropped_filedir;	
 
 	//Images
 	SDL_Texture* emptySound;
@@ -73,11 +75,8 @@ private:
 	//Selector
 	SDL_Rect selecPos;
 
-	//Font
-	TTF_Font *gFont = NULL; //Arial
-	//std::vector<SDL_Texture*> textos;
-	SDL_Texture* textFont;
-	SDL_Rect textPos;	
+	//Font	
+	std::vector<Texto*> textos;	
 
 };
 

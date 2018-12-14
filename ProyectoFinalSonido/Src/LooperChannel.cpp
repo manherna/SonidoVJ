@@ -153,8 +153,10 @@ float LooperChannel::getVolume()
 
 void LooperChannel::setVolume(const float & v)
 {
-	_attr.volume = v;
-	_channel->setVolume(v);
+	if (v >= -0.001 && v <= 1){
+		_attr.volume = v;
+		_channel->setVolume(v);
+	}
 }
 
 void LooperChannel::setChannelAttributes(FMOD::Channel * ch)
