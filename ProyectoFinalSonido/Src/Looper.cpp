@@ -237,6 +237,11 @@ void Looper::render()
 	for (int i = 0; i < textos.size(); i++){
 		SDL_RenderCopy(renderer, textos[i]->getTexture(), NULL, &textos[i]->getRect());
 	}
+
+	for (int i = 0; i < textosCanciones.size(); i++){
+		textosCanciones[i]->setRectX(i * 100+10); //Para que se coloquen segun su indice
+		SDL_RenderCopy(renderer, textosCanciones[i]->getTexture(), NULL, &textosCanciones[i]->getRect());
+	}
 	
 	SDL_RenderPresent(renderer);	
 }
@@ -338,6 +343,7 @@ void Looper::deleteSound(int n)
 {	
 	_channels[n]->stopSound();
 	_channels.erase(_channels.begin() + n );	
+	textosCanciones.erase(textosCanciones.begin() + n);
 }
 
 void Looper::processState()
@@ -422,13 +428,53 @@ void Looper::processDrop()
 
 	if (e.type == SDL_DROPFILE) 
 	{
-		dropped_filedir = e.drop.file;			
+		dropped_filedir = e.drop.file;		
+
+		std::string s = getTitle();
+
+		Texto* tess = new Texto(s, renderer);
+		tess->setPosition((numChannels*100)+10, 565);
+		textosCanciones.push_back(tess);
 
 		LooperChannel* aux = new LooperChannel(_system, numChannels);
 		aux->loadFile(dropped_filedir);		
 		_channels.push_back(aux);	
 		numChannels++;		
 	}
+}
+
+std::string Looper::getTitle()
+{
+	//Get the track title
+	std::string s = dropped_filedir;
+
+	std::string delimiter = "-";
+
+	//std::string token = s.substr(0, s.find(delimiter)); // token is "scott"
+
+	size_t pos = 0;
+	std::string token;
+
+	while ((pos = s.find(delimiter)) != std::string::npos) {
+		token = s.substr(0, pos);
+		std::cout << token << std::endl;
+		s.erase(0, pos + delimiter.length());
+	}	
+
+	delimiter = "\\";
+
+	//std::string token = s.substr(0, s.find(delimiter)); // token is "scott"
+
+	pos = 0;
+
+	while ((pos = s.find(delimiter)) != std::string::npos) {
+		token = s.substr(0, pos);
+		std::cout << token << std::endl;
+		s.erase(0, pos + delimiter.length());
+	}
+
+	//std::cout << s << std::endl;
+	return s;
 }
 
 bool Looper::run() 

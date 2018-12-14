@@ -50,6 +50,7 @@ private:
 	SDL_Texture* loadTexture(std::string path);
 	void render();
 	std::string getActiveMode();
+	std::string getTitle();
 
 	//Sound
 	FMOD::System * _system;	
@@ -77,6 +78,7 @@ private:
 
 	//Font	
 	std::vector<Texto*> textos;	
+	std::vector<Texto*> textosCanciones;
 
 };
 

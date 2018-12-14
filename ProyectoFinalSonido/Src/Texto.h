@@ -15,6 +15,7 @@ public:
 	SDL_Rect getRect(){ return textPos; }
 	void setString(std::string text, SDL_Renderer* renderer);
 	void setPosition(int x, int y);
+	void setRectX(int x){ textPos.x = x; }
 
 private:
 	bool load(std::string textureText, SDL_Color textColor, SDL_Renderer* renderer);
