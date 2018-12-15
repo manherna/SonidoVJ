@@ -5,6 +5,11 @@ Texto::Texto(std::string cadena, SDL_Renderer* renderer)
 	loadFont(cadena, renderer);
 	//renderer_ = renderer;
 }
+Texto::~Texto()
+{
+	SDL_free(textFont);		
+	SDL_free(gFont);	
+}
 
 void Texto::setString(std::string text, SDL_Renderer* renderer)
 {
@@ -21,8 +26,14 @@ void Texto::setPosition(int x, int y)
 
 void Texto::loadFont(std::string text, SDL_Renderer* renderer)
 {
+
+#if Debug
 	//Open the font
 	gFont = TTF_OpenFont("../Fonts/arial.ttf", 14);
+#else
+	gFont = TTF_OpenFont("../../Fonts/arial.ttf", 14);
+#endif
+
 	if (gFont == NULL)
 		printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
 	else

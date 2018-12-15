@@ -69,11 +69,21 @@ bool Looper::init()
 	}
 	_activeChannel = -1;
 
+#if Debug
 	//Carga de texturas
 	emptySound = loadTexture("../Images/pistaVacia.png");
 	fullSound = loadTexture("../Images/pistaFull.png");
 	selector = loadTexture("../Images/seleccion.png");
-	selecPos = {-100, 0, 100, 600 };
+	selecPos = { -100, 0, 100, 600 };
+#else
+	//Carga de texturas
+	emptySound = loadTexture("../../Images/pistaVacia.png");
+	fullSound = loadTexture("../../Images/pistaFull.png");
+	selector = loadTexture("../../Images/seleccion.png");
+	selecPos = { -100, 0, 100, 600 };
+#endif
+
+	
 
 	if (emptySound == NULL || fullSound == NULL || selector == NULL)
 		printf("Failed loading textures\n");	
@@ -153,10 +163,19 @@ void Looper::release() {
 	for (int i = 0; i < _channels.size(); i++)
 		delete _channels[i];
 
+	for (int i = 0; i < textos.size(); i++)
+		delete textos[i];
+
+	for (int i = 0; i < textosCanciones.size(); i++)
+		delete textosCanciones[i];	
+
 	_channels.clear();
-	delete emptySound;
-	delete fullSound;
-	delete selector;
+	textos.clear();
+	textosCanciones.clear();
+
+	SDL_free(emptySound);	
+	SDL_free(fullSound);	
+	SDL_free(selector);	
 
 	FMOD_RESULT res;
 	res = _system->release();

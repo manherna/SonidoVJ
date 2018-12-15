@@ -9,7 +9,7 @@
 class Texto{
 public:
 	Texto(std::string cadena, SDL_Renderer* renderer);
-	~Texto(){}
+	~Texto();
 
 	SDL_Texture* getTexture(){ return textFont; }
 	SDL_Rect getRect(){ return textPos; }
