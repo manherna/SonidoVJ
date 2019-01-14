@@ -4,20 +4,19 @@
 
 static FMOD::System * _system;
 static FMOD::Sound * recordedS;
-static FMOD_CREATESOUNDEXINFO exinfo;
-static int nativeRate;
+FMOD_CREATESOUNDEXINFO Recorder::exinfo;
+int Recorder::nativeRate;
 static int nativeChannels;
 static clock_t ini;
 static clock_t fin;
 
-static unsigned int driftThreshold;
-static unsigned int desiredLatency;
-static unsigned int adjustedLatency;
-static int actualLatency;
+unsigned int Recorder::driftThreshold;
+unsigned int Recorder::desiredLatency;
+unsigned int Recorder::adjustedLatency;
+int Recorder::actualLatency;
 
 void Recorder::init(FMOD::System * syst)
-{
-	
+{	
 	/*
 		Determine latency in samples.
 	*/
@@ -32,17 +31,25 @@ void Recorder::init(FMOD::System * syst)
 	desiredLatency = (nativeRate * LATENCY_MS) / 1000;     /* User specified latency */
 	adjustedLatency = desiredLatency;                      /* User specified latency adjusted for driver update granularity */
 	actualLatency = desiredLatency;               /* Latency measured once playback begins (smoothened for jitter) */
-
-
+	
 	exinfo = { 0 };
 	exinfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);
 	exinfo.numchannels = nativeChannels;
 	exinfo.format = FMOD_SOUND_FORMAT_PCM16;
 	exinfo.defaultfrequency = nativeRate;
-	exinfo.length = nativeRate* sizeof(short) * nativeChannels * 15; /* 1 second buffer, size here doesn't change latency */
-
-
+	exinfo.length = 90000000; //nativeRate * sizeof(short) * nativeChannels; //* 15; /* 1 second buffer, size here doesn't change latency */
+	
 	std::cout << "Recorder Inicializado" << std::endl;
+}
+
+void Recorder::doubleLength()
+{
+	exinfo.length = exinfo.length * 2;
+}
+
+void Recorder::setLength(int n)
+{
+	exinfo.length = n;
 }
 
 int Recorder::getNativeRate()
@@ -68,7 +75,7 @@ FMOD::Sound * Recorder::stopRecording()
 {
 	fin = clock();
 	int a = _system->recordStop(DEVICE_INDEX);
-	std::cout << (fin - ini) * 1000 << " "<<a << std::endl;
+	std::cout << (fin - ini) * 1000 << " " << a << std::endl;
 	recordedS->setLoopPoints(0, FMOD_TIMEUNIT_MS, (fin - ini) * 1000 / (CLOCKS_PER_SEC), FMOD_TIMEUNIT_MS);
 
 	FMOD::Sound * aux = recordedS;

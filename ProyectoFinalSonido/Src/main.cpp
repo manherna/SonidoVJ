@@ -1,6 +1,5 @@
 #include <fmod.h>
 #include <fmod.hpp>
-#include <SDL2/SDL.h>
 #include "Looper.h"
 #include "Recorder.h"
 #include <iostream>
@@ -8,11 +7,15 @@
 
 //int main(int argc, char *args[]) //SDL, se puede cambiar el punto de entrada para que funcionen ambos
 
-int FMOD_Main()
-{
-	//SDL_Window *window = NULL;
-	//return 0;
+int FMOD_Main() {
+
+	FMOD::Channel *channel = NULL;
+	unsigned int samplesRecorded = 0;
+	unsigned int samplesPlayed = 0;
+	bool dspEnabled = false;
+
 	FMOD::System * system = nullptr;
+
 	void *extraDriverData = NULL;
 	Common_Init(&extraDriverData); //Init FMOD
 
@@ -42,13 +45,23 @@ int FMOD_Main()
 
 	std::cout << "Comenzando programa..." << std::endl;
 
-	FMOD::Sound * snd = nullptr;
-	FMOD::Channel * chnel = nullptr;
-
 	Recorder::init(system);
 
-	while (true) 
+	FMOD::Sound *sound = NULL;
+	result = system->createSound(0, FMOD_LOOP_NORMAL | FMOD_OPENUSER, &Recorder::exinfo, &sound);
+	ERRCHECK(result);
+
+	//result = system->recordStart(DEVICE_INDEX, sound, true);
+	//ERRCHECK(result);
+
+	unsigned int soundLength = 0;
+	result = sound->getLength(&soundLength, FMOD_TIMEUNIT_PCM);
+	ERRCHECK(result);
+
+	while (true)
 	{
+		//Common_Update();
+
 		if (_kbhit()) {
 			char c = _getch();
 
@@ -60,16 +73,27 @@ int FMOD_Main()
 					std::cout << "Recording" << std::endl;
 				}
 				else {
-					snd = Recorder::stopRecording();
-					system->playSound(snd, NULL, false, &chnel);
+
+					//Determine how much has been recorded since we last checked
+					unsigned int recordPos = 0;
+					result = system->getRecordPosition(DEVICE_INDEX, &recordPos);
+					if (result != FMOD_ERR_RECORD_DISCONNECTED)
+					{
+						ERRCHECK(result);
+					}
+					//Recorder::setLength(recordPos);
+
+					sound = Recorder::stopRecording();
+					system->playSound(sound, NULL, false, &channel);
 					std::cout << "Stopped Recording" << std::endl;
-					
 				}
 			}
 
 		}
+
 		system->update();
-	}
-	
+		
+	} //Fin del while
+
 	exit(0);
 }

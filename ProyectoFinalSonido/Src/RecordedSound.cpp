@@ -9,11 +9,17 @@ RecordedSound::RecordedSound(Recorder* s)
 	exinfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);
 	exinfo.numchannels = system_->getNativeChannels();
 	exinfo.format = FMOD_SOUND_FORMAT_PCM16;
-	exinfo.defaultfrequency = system_->getNativeRate();
+	exinfo.defaultfrequency = system_->getNativeRate();	
 	exinfo.length = system_->getNativeRate() * sizeof(short) * system_->getNativeChannels(); /* 1 second buffer, size here doesn't change latency */
 
 	sound = NULL;
 	result = system_->getSystem()->createSound(0, FMOD_LOOP_NORMAL | FMOD_OPENUSER, &exinfo, &sound);
+	if (result == -1)
+		std::cout << "Error en la creacion de sonido" << std::endl;
+
+	unsigned int soundLength = 0;
+	result = sound->getLength(&soundLength, FMOD_TIMEUNIT_PCM);
+
 	if (result == -1)
 		std::cout << "Error en la creacion de sonido" << std::endl;
 }
