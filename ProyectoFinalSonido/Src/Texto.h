@@ -12,6 +12,7 @@ public:
 	~Texto();
 
 	SDL_Texture* getTexture(){ return textFont; }
+	TTF_Font * getFont() { return gFont; }
 	SDL_Rect getRect(){ return textPos; }
 	void setString(std::string text, SDL_Renderer* renderer);
 	void setPosition(int x, int y);
@@ -25,7 +26,5 @@ private:
 	SDL_Rect textPos;
 	TTF_Font *gFont = NULL;
 	int x_, y_;
-	//SDL_Renderer* renderer_;
-	
 
 };

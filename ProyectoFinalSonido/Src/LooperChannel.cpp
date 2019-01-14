@@ -36,6 +36,11 @@ LooperChannel::~LooperChannel()
 	_sound->release();
 }
 
+void LooperChannel::release()
+{
+	_sound->release();		
+}
+
 /*
 	Carga un sonido desde otro Sound.
 	@param sound: FMOD::Sound que se asigna a LooperSound.
@@ -103,10 +108,10 @@ void LooperChannel::stopSound()
 
 bool LooperChannel::isPlaying()
 {
-	bool playing = false;
-	if(_channel != nullptr)
-		_channel->isPlaying(&playing);
-	return playing;
+	bool playing = true;
+	if (_channel != nullptr)
+		_channel->getPaused(&playing);
+	return !playing;
 }
 
 short LooperChannel::getChannelNumber()

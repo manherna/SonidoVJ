@@ -20,8 +20,8 @@ public:
 	LooperChannel(FMOD::System * syst, const short & channelNo);
 	LooperChannel(FMOD::System * syst, const char * path, const short & channelNo);
 	virtual ~LooperChannel();
+	void release();
 	void loadSound(FMOD::Sound *, const bool & looping = false);
-	void loadSound(const char * soundName,const bool & looping = false);
 	void loadFile(const char * soundName, const bool & looping = false);
 	void playSound();
 	void stopSound();
@@ -48,6 +48,5 @@ private:
 	short _channelNo;
 
 	SDL_Rect rect;
-
 };
 

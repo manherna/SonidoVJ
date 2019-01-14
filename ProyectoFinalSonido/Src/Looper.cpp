@@ -238,7 +238,7 @@ void Looper::render()
 		_channels[i]->setRectX(i*100); //Para que se coloquen segun su indice
 		SDL_RenderCopy(renderer, aux, NULL, &_channels[i]->getRect());		
 	}
-
+	
 	//Selector pista activa
 	SDL_RenderCopy(renderer, selector, NULL, &selecPos);
 
@@ -263,6 +263,7 @@ void Looper::render()
 	}
 	
 	SDL_RenderPresent(renderer);	
+	
 }
 
 void Looper::processKeys()
@@ -360,8 +361,16 @@ void Looper::processKeys()
 
 void Looper::deleteSound(int n)
 {	
+	//Apartado sonoro
 	_channels[n]->stopSound();
-	_channels.erase(_channels.begin() + n );	
+	//_channels[n]->release(); //release del atributo sound
+	delete _channels[n];
+	_channels.erase(_channels.begin() + n );
+
+	//Apartado visual
+	//SDL_free(textosCanciones[n]->getFont());
+	//SDL_free(textosCanciones[n]->getTexture());	
+	delete textosCanciones[n];
 	textosCanciones.erase(textosCanciones.begin() + n);
 }
 
@@ -405,8 +414,9 @@ void Looper::playChannel(const int & n)
 	if (n < 0 || n > _channels.size())
 		throw new std::exception("CHANNEL NUMBER OUT OF CHANNEL INDEX");
 
-	if (_channels[n] != nullptr)
-		_channels[n]->playSound();
+	if (_channels[n] != nullptr) {
+		_channels[n]->playSound();		
+	}
 }
 
 void Looper::pauseChannel(const int & nc)
@@ -466,40 +476,31 @@ std::string Looper::getTitle()
 {
 	//Get the track title
 	std::string s = dropped_filedir;
-
-	std::string delimiter = "-";
-
-	//std::string token = s.substr(0, s.find(delimiter)); // token is "scott"
+	std::string delimiter = "-";	
 
 	size_t pos = 0;
 	std::string token;
 
 	while ((pos = s.find(delimiter)) != std::string::npos) {
-		token = s.substr(0, pos);
-		std::cout << token << std::endl;
+		token = s.substr(0, pos);		
 		s.erase(0, pos + delimiter.length());
 	}	
 
-	delimiter = "\\";
-
-	//std::string token = s.substr(0, s.find(delimiter)); // token is "scott"
-
+	delimiter = "\\";	
 	pos = 0;
 
 	while ((pos = s.find(delimiter)) != std::string::npos) {
-		token = s.substr(0, pos);
-		std::cout << token << std::endl;
+		token = s.substr(0, pos);		
 		s.erase(0, pos + delimiter.length());
 	}
-
-	//std::cout << s << std::endl;
+	
 	return s;
 }
 
 bool Looper::run() 
 {
 #if Debug
-	system("CLS");
+	//system("CLS");
 #endif
 
 	processKeys();
@@ -519,7 +520,7 @@ bool Looper::run()
 		return false;
 	}
 #if Debug
-	printHUD();
+	//printHUD();
 #endif
 	return true;
 }
