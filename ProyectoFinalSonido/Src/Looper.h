@@ -16,7 +16,7 @@
 
 //#define NUM_LOOPER_CHANNELS 9
 
-enum EditMode { NOTHING, PLAY, STOP, LOOP, VOLUME, PITCH, FLANGER};
+enum EditMode { NOTHING, PLAY, STOP, LOOP, VOLUME, PITCH, FLANGER, RECORD};
 
 enum addMode {NOADD, ADD, REMOVE};
 
@@ -72,9 +72,12 @@ private:
 	SDL_Texture* emptySound;
 	SDL_Texture* fullSound;
 	SDL_Texture* selector;
+	SDL_Texture* recordingTexture;
 
 	//Selector
 	SDL_Rect selecPos;
+	//Recorder
+	SDL_Rect recorderPos;
 
 	//Font	
 	std::vector<Texto*> textos;	

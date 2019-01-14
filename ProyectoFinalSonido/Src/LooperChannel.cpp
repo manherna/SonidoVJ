@@ -110,7 +110,8 @@ bool LooperChannel::isPlaying()
 {
 	bool playing = true;
 	if (_channel != nullptr)
-		_channel->getPaused(&playing);
+		_channel->getPaused(&playing);	
+
 	return !playing;
 }
 

@@ -3,6 +3,7 @@
 #include <iostream>
 #include "Utilities.h"
 #include <stdlib.h>
+#include "Recorder.h"
 
 //SDL_Surface* Looper::screenSurface = NULL;
 //SDL_Renderer* Looper::renderer = NULL;
@@ -75,16 +76,18 @@ bool Looper::init()
 	fullSound = loadTexture("../Images/pistaFull.png");
 	selector = loadTexture("../Images/seleccion.png");
 	selecPos = { -100, 0, 100, 600 };
+	recordingTexture = loadTexture("../Images/Recorder.png");
+	recorderPos = { WIN_WIDTH - 120, 50, 70, 70 };
 #else
 	//Carga de texturas
 	emptySound = loadTexture("../../Images/pistaVacia.png");
 	fullSound = loadTexture("../../Images/pistaFull.png");
 	selector = loadTexture("../../Images/seleccion.png");
 	selecPos = { -100, 0, 100, 600 };
+	recordingTexture = loadTexture("../../Images/Recorder.png");
+	recorderPos = { WIN_WIDTH - 50, WIN_HEIGHT + 50, 70, 70 };
 #endif
-
 	
-
 	if (emptySound == NULL || fullSound == NULL || selector == NULL)
 		printf("Failed loading textures\n");	
 
@@ -97,8 +100,7 @@ bool Looper::init()
 
 	aux = new Texto("Text2", renderer);
 	aux->setPosition(30, 652);
-	textos.push_back(aux);
-	
+	textos.push_back(aux);	
 
 	/*
 	_channels[_activeChannel]->loadSound("../Sounds/hiphop.wav");
@@ -127,6 +129,8 @@ bool Looper::init()
 	_lastActiveMode = NOTHING;
 	_addMode = NOADD;
 	_lastAddMode = NOADD;
+
+	Recorder::init(_system);
 
 	return true;
 }
@@ -176,6 +180,7 @@ void Looper::release() {
 	SDL_free(emptySound);	
 	SDL_free(fullSound);	
 	SDL_free(selector);	
+	SDL_free(recordingTexture);
 
 	FMOD_RESULT res;
 	res = _system->release();
@@ -216,6 +221,9 @@ std::string Looper::getActiveMode()
 	case FLANGER:
 		return "Flanger";
 		break;
+	case RECORD:
+		return "Record";
+		break;
 	default:	
 		return "yay";
 		break;
@@ -241,6 +249,9 @@ void Looper::render()
 	
 	//Selector pista activa
 	SDL_RenderCopy(renderer, selector, NULL, &selecPos);
+	//Textura de recorder
+	if(Recorder::isRecording())
+		SDL_RenderCopy(renderer, recordingTexture, NULL, &recorderPos);
 
 	//Textos	
 	std::string activetext = getActiveMode();	
@@ -263,7 +274,6 @@ void Looper::render()
 	}
 	
 	SDL_RenderPresent(renderer);	
-	
 }
 
 void Looper::processKeys()
@@ -343,10 +353,14 @@ void Looper::processKeys()
 			_activeMode = NOTHING;
 			_activeChannel = -1;
 			break;
-		case (SDLK_r) :
+		case (SDLK_x) :
 			deleteSound(_activeChannel);
 			numChannels--;
 			_activeMode = NOTHING; //Para que no afecte el modo activo al nuevo index del looper			
+			break;
+		case (SDLK_r):
+			_lastActiveMode = _activeMode;
+			_activeMode = RECORD;
 			break;
 		case(SDLK_ESCAPE) :
 			release();
@@ -382,6 +396,29 @@ void Looper::processState()
 	case(PLAY) :
 		if (_activeChannel < _channels.size() && _channels[_activeChannel])
 			playChannel(_activeChannel);
+		break;
+	case RECORD:
+		if (Recorder::isRecording()) 
+		{
+			FMOD::Sound* record = Recorder::stopRecording();
+			LooperChannel * nuevo = new LooperChannel(_system, numChannels);
+			nuevo->loadSound(record, false);
+			_channels.push_back(nuevo);
+			_channels[numChannels]->playSound();
+
+			Texto* tess = new Texto("Grabacion", renderer);
+			tess->setPosition((numChannels * 100) + 10, 565);
+			textosCanciones.push_back(tess);			
+			numChannels++;
+			_activeMode = NOTHING;
+		}
+		else {
+			if (_channels.size() < 9) { //Si hay pistas disponibles
+				Recorder::startRecording();
+				_activeMode = NOTHING; //Para que no vuelva a entrar siguiente ciclo
+			}
+		}
+
 		break;
 	case(STOP) :	
 		if (_activeChannel < _channels.size() && _channels[_activeChannel])
