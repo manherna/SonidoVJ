@@ -14,21 +14,11 @@ LooperChannel::LooperChannel(FMOD::System * syst, const short & channelNo): _sys
 	rect.y = 0;
 	rect.w = 100;
 	rect.h = 600;
-}
 
-LooperChannel::LooperChannel(FMOD::System * syst, const char * soundName, const short & channelNo): _system(syst), _channelNo(channelNo)
-{	
-	_attr.loop = false;
-	_attr.pitch = 1.0f;
-	_attr.volume = 1.0f;
-	std::string buf("../Sounds/");
-	buf.append(soundName);
-	_attr.loop = false;
-	_attr.pitch = 1.0f;
-	_attr.volume = 1.0f;
-
-	_system->createSound(buf.data(), FMOD_LOOP_OFF, 0, &_sound);
-	_system->playSound(_sound, NULL, true, &_channel);
+	//Efectos	
+	_system->createDSPByType(FMOD_DSP_TYPE_ECHO, &dsp_echo);	
+	dsp_echo->setParameterFloat(FMOD_DSP_ECHO_DELAY, echo);
+	_system->createDSPByType(FMOD_DSP_TYPE_FLANGE, &dsp_flange);	
 }
 
 LooperChannel::~LooperChannel()
@@ -56,7 +46,7 @@ void LooperChannel::loadSound(FMOD::Sound * sound, const bool & looping)
 
 
 /*
-	Carga un sonido desde la carpeta Sounds desde el proyecto.
+	Carga un sonido desde una ruta del ordenador.
 	@param soundName: nombre del sonido, almacenado en la carpeta Sounds del proyecto.
 	@param looping: true si quieres que el sonido se reproduzca en loop infinito. false si no
 
@@ -163,6 +153,29 @@ void LooperChannel::setVolume(const float & v)
 		_attr.volume = v;
 		_channel->setVolume(v);
 	}
+}
+
+void LooperChannel::toggleEcho()
+{
+	bool active = false;
+	dsp_echo->getActive(&active);	
+
+	if (active)	
+		_channel->removeDSP(dsp_echo);		
+	else
+		_channel->addDSP(1, dsp_echo); //1 para posibilidad de repetir		
+	
+}
+
+void LooperChannel::setEcho(float n)
+{	
+	echo = n;
+	dsp_echo->setParameterFloat(FMOD_DSP_ECHO_DELAY, echo);
+}
+
+void LooperChannel::toggleFlange()
+{
+
 }
 
 void LooperChannel::setChannelAttributes(FMOD::Channel * ch)

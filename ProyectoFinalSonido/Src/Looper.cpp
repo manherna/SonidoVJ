@@ -61,7 +61,7 @@ bool Looper::init()
 		res = System_Create(&_system);
 		ERRCHECK(res);
 		res = _system->init(128, FMOD_INIT_NORMAL, 0);
-		ERRCHECK(res);		
+		ERRCHECK(res);	
 	}
 	catch (std::exception & e){
 		std::cout << "An exception has ocurred: " << e.what() << std::endl;
@@ -224,6 +224,9 @@ std::string Looper::getActiveMode()
 	case RECORD:
 		return "Record";
 		break;
+	case ECHO:
+		return "Echo";
+		break;
 	default:	
 		return "yay";
 		break;
@@ -256,7 +259,10 @@ void Looper::render()
 	//Textos	
 	std::string activetext = getActiveMode();	
 	
-	textos[0]->setString("Active Mode: " + activetext, renderer);	
+	if(Recorder::isRecording())
+		textos[0]->setString("Active Mode: Recording", renderer);
+	else
+		textos[0]->setString("Active Mode: " + activetext, renderer);	
 
 	short volumen = 0;	
 	if (_activeChannel < _channels.size() && _channels[_activeChannel])
@@ -354,13 +360,21 @@ void Looper::processKeys()
 			_activeChannel = -1;
 			break;
 		case (SDLK_x) :
-			deleteSound(_activeChannel);
-			numChannels--;
-			_activeMode = NOTHING; //Para que no afecte el modo activo al nuevo index del looper			
+			if (_activeChannel < _channels.size() && _channels[_activeChannel]) {
+				deleteSound(_activeChannel);
+				numChannels--;
+				_activeMode = NOTHING; //Para que no afecte el modo activo al nuevo index del looper	
+			}
 			break;
 		case (SDLK_r):
 			_lastActiveMode = _activeMode;
 			_activeMode = RECORD;
+			break;
+		case (SDLK_e):
+			if (_activeChannel < _channels.size() && _channels[_activeChannel])
+				_channels[_activeChannel]->toggleEcho();
+			_lastActiveMode = _activeMode;
+			_activeMode = ECHO;
 			break;
 		case(SDLK_ESCAPE) :
 			release();
@@ -391,6 +405,11 @@ void Looper::deleteSound(int n)
 void Looper::processState()
 {
 	if (!_keypressed || (_activeChannel < 0)) return;
+
+	float echo = 0;
+	if (_activeChannel < _channels.size() && _channels[_activeChannel])
+		 echo = _channels[_activeChannel]->getEcho();
+
 	switch (_activeMode)
 	{
 	case(PLAY) :
@@ -435,6 +454,13 @@ void Looper::processState()
 			else if(_addMode = REMOVE)
 				_channels[_activeChannel]->setVolume(_channels[_activeChannel]->getVolume() - 0.1f);
 		_addMode = NOADD;
+	case(ECHO):		
+		if (_lastAddMode != _addMode)
+			if (_addMode == ADD)
+				_channels[_activeChannel]->setEcho(echo + 10);
+			else if (_addMode = REMOVE)
+				_channels[_activeChannel]->setEcho(echo - 10);
+		_addMode = NOADD;		
 	case(PITCH):
 		if (_lastAddMode != _addMode)
 			if (_addMode == ADD)

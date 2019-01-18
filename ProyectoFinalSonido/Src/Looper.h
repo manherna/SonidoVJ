@@ -16,7 +16,7 @@
 
 //#define NUM_LOOPER_CHANNELS 9
 
-enum EditMode { NOTHING, PLAY, STOP, LOOP, VOLUME, PITCH, FLANGER, RECORD};
+enum EditMode { NOTHING, PLAY, STOP, LOOP, VOLUME, PITCH, FLANGER, RECORD, ECHO};
 
 enum addMode {NOADD, ADD, REMOVE};
 
@@ -82,6 +82,5 @@ private:
 	//Font	
 	std::vector<Texto*> textos;	
 	std::vector<Texto*> textosCanciones;
-
 };
 
