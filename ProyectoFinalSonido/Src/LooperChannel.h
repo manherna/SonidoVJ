@@ -18,8 +18,7 @@ class LooperChannel
 public:
 	LooperChannel();
 	LooperChannel(FMOD::System * syst, const short & channelNo);	
-	virtual ~LooperChannel();
-	void release();
+	virtual ~LooperChannel();	
 
 	void loadSound(FMOD::Sound *, const bool & looping = false);
 	void loadFile(const char * soundName, const bool & looping = false);
@@ -42,8 +41,9 @@ public:
 	void toggleEcho();
 	void setEcho(float n);
 	float getEcho() { return echo; }
+	bool getEchoActive() { bool active; dsp_echo->getActive(&active); return active; }
 
-	void toggleFlange();
+	void toggleFlange();	
 
 	//SDL
 	void setRectX(int n){ rect.x = n; }
@@ -60,8 +60,8 @@ private:
 	//Efectos	
 	FMOD::DSP *dsp_echo = 0;
 	float echo = 50.0f;
-	FMOD::DSP *dsp_flange = 0;	
+	FMOD::DSP *dsp_flange = 0;		
 
-	SDL_Rect rect;
+	SDL_Rect rect; //Rectangulo que ocupa la textura
 };
 

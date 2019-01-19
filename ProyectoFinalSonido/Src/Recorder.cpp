@@ -21,8 +21,7 @@ void Recorder::init(FMOD::System * syst)
 	nativeRate = 0;
 	nativeChannels = 0;
 	FMOD_RESULT result;
-	result = _system->getRecordDriverInfo(DEVICE_INDEX, NULL, 0, NULL, &nativeRate, NULL, &nativeChannels, NULL);
-	//ERRCHECK(result);
+	result = _system->getRecordDriverInfo(DEVICE_INDEX, NULL, 0, NULL, &nativeRate, NULL, &nativeChannels, NULL);	
 
 	driftThreshold = (nativeRate * DRIFT_MS) / 1000;       /* The point where we start compensating for drift */
 	desiredLatency = (nativeRate * LATENCY_MS) / 1000;     /* User specified latency */

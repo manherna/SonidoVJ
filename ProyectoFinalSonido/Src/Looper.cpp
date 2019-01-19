@@ -5,8 +5,6 @@
 #include <stdlib.h>
 #include "Recorder.h"
 
-//SDL_Surface* Looper::screenSurface = NULL;
-//SDL_Renderer* Looper::renderer = NULL;
 SDL_Window* Looper::window = NULL;
 
 Looper::Looper() {
@@ -20,7 +18,6 @@ Looper::~Looper() {
 bool Looper::init()
 {
 	//SLD Window and libraries
-
 	//Create window
 	window = SDL_CreateWindow("Looper", 450, 175, WIN_WIDTH, WIN_HEIGHT, SDL_WINDOW_SHOWN);
 	if (window == NULL)
@@ -88,39 +85,24 @@ bool Looper::init()
 	recorderPos = { WIN_WIDTH - 50, WIN_HEIGHT + 50, 70, 70 };
 #endif
 	
-	if (emptySound == NULL || fullSound == NULL || selector == NULL)
+	if (emptySound == NULL || fullSound == NULL || selector == NULL || recordingTexture == NULL)
 		printf("Failed loading textures\n");	
 
-	//Es una mierda tener que pasarle el renderer en todas las llamadas, pero pasandoselo en la constructora
-	//y almacenandolo como atributo me dice que el renderer no es bueno
+	Texto* aux = new Texto("Text0", renderer);
+	aux->setPosition(20, 620);
+	textos.push_back(aux);
 
-	Texto* aux = new Texto("Text1", renderer);
-	aux->setPosition(30, 636);
+	aux = new Texto("Text1", renderer);
+	aux->setPosition(20, 636);
 	textos.push_back(aux);
 
 	aux = new Texto("Text2", renderer);
-	aux->setPosition(30, 652);
-	textos.push_back(aux);	
+	aux->setPosition(20, 652);
+	textos.push_back(aux);		
 
-	/*
-	_channels[_activeChannel]->loadSound("../Sounds/hiphop.wav");
-	_activeChannel++;
-	_channels[_activeChannel]->loadSound("../Sounds/one.wav");
-	_activeChannel++;
-	_channels[_activeChannel]->loadSound("../Sounds/t1.wav");
-	_activeChannel++;
-	_channels[_activeChannel]->loadSound("../Sounds/t2.wav");
-	_activeChannel++;
-	_channels[_activeChannel]->loadSound("../Sounds/t3.wav");
-	_activeChannel++;
-	_channels[_activeChannel]->loadSound("../Sounds/t4.wav");
-	_activeChannel++;
-
-	_channels[_activeChannel]->loadSound("../Sounds/uh.wav");
-	_activeChannel++;
-	_channels[_activeChannel]->loadSound("../Sounds/again.wav");
-	_activeChannel = -1;
-	*/
+	aux = new Texto("Text3", renderer);
+	aux->setPosition(300, 300);
+	textos.push_back(aux);
 
 	//_channels[_activeChannel]->loadSound("../Sounds/again.wav");
 	_activeChannel = 0;	
@@ -130,8 +112,10 @@ bool Looper::init()
 	_addMode = NOADD;
 	_lastAddMode = NOADD;
 
-	Recorder::init(_system);
+	textos[0]->setString("P (play), X (remove), O (pitch), F (Flange), E (Echo), V (Volume), + and - (adjust), SPACE (no effect)", renderer);
+	textos[3]->setString("Drop a file into the window to get started.", renderer);
 
+	Recorder::init(_system);
 	return true;
 }
 
@@ -196,6 +180,7 @@ void Looper::release() {
 	}	
 }
 
+//Utilizado para saber qué imprimir por pantalla
 std::string Looper::getActiveMode()
 {
 	switch (_activeMode)
@@ -216,16 +201,20 @@ std::string Looper::getActiveMode()
 		return "Volume";
 		break;
 	case PITCH:
+		if (_activeChannel < _channels.size() && _channels[_activeChannel])
+			return "Pitch: " + std::to_string(_channels[_activeChannel]->getPitch());
 		return "Pitch";
-		break;
-	case FLANGER:
-		return "Flanger";
-		break;
+		break;	
 	case RECORD:
 		return "Record";
 		break;
 	case ECHO:
+		if (_activeChannel < _channels.size() && _channels[_activeChannel] && _channels[_activeChannel]->getEchoActive()) 
+			return "Echo (Active): " + std::to_string(_channels[_activeChannel]->getEcho());
 		return "Echo";
+		break;
+	case FLANGE:
+		return "Flange";
 		break;
 	default:	
 		return "yay";
@@ -257,19 +246,20 @@ void Looper::render()
 		SDL_RenderCopy(renderer, recordingTexture, NULL, &recorderPos);
 
 	//Textos	
-	std::string activetext = getActiveMode();	
-	
+	std::string activetext = getActiveMode();		
+
 	if(Recorder::isRecording())
-		textos[0]->setString("Active Mode: Recording", renderer);
+		textos[1]->setString("Active Mode: Recording", renderer);
 	else
-		textos[0]->setString("Active Mode: " + activetext, renderer);	
+		textos[1]->setString("Active Mode: " + activetext, renderer);	
 
 	short volumen = 0;	
 	if (_activeChannel < _channels.size() && _channels[_activeChannel])
 		volumen = _channels[_activeChannel]->getVolume()*100;
 
-	textos[1]->setString("Active Channel volume: " + std::to_string(volumen), renderer);
+	textos[2]->setString("Active Channel volume: " + std::to_string(volumen), renderer);
 	
+	//Textos parte inferior del programa con información
 	for (int i = 0; i < textos.size(); i++){
 		SDL_RenderCopy(renderer, textos[i]->getTexture(), NULL, &textos[i]->getRect());
 	}
@@ -369,6 +359,12 @@ void Looper::processKeys()
 		case (SDLK_r):
 			_lastActiveMode = _activeMode;
 			_activeMode = RECORD;
+			break;
+		case (SDLK_f):
+			if (_activeChannel < _channels.size() && _channels[_activeChannel]) 
+				_channels[_activeChannel]->toggleFlange();			
+			_lastActiveMode = _activeMode;
+			_activeMode = FLANGE;
 			break;
 		case (SDLK_e):
 			if (_activeChannel < _channels.size() && _channels[_activeChannel])
@@ -520,6 +516,7 @@ void Looper::processDrop()
 
 	if (e.type == SDL_DROPFILE) 
 	{
+		textos[3]->setString(" ", renderer); //Ya no es necesario indicaciones
 		dropped_filedir = e.drop.file;		
 
 		std::string s = getTitle();

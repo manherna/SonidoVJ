@@ -14,20 +14,18 @@
 
 #include "Texto.h"
 
-//#define NUM_LOOPER_CHANNELS 9
-
-enum EditMode { NOTHING, PLAY, STOP, LOOP, VOLUME, PITCH, FLANGER, RECORD, ECHO};
+enum EditMode { NOTHING, PLAY, STOP, LOOP, VOLUME, PITCH, RECORD, ECHO, FLANGE};
 
 enum addMode {NOADD, ADD, REMOVE};
 
 class Looper {
 
 public:
+	//Atributos SDL
 	static const int WIN_HEIGHT = 680;
 	static const int WIN_WIDTH = 900;	
 	SDL_Renderer* renderer;
-	static SDL_Window * window;
-	//static 
+	static SDL_Window * window;	
 
 	Looper();
 	~Looper();
@@ -38,14 +36,14 @@ public:
 
 private:
 	void processKeys();
-	void processDrop();
-	void loadSound();
+	void processDrop();	
 	void processState();
 	void playChannel(const int &n);	
 	void pauseChannel(const int & nc);
 	void toggleLoopChannel(const int & n);
 	void printHUD();
 	void deleteSound(int n);
+
 	//Textures
 	SDL_Texture* loadTexture(std::string path);
 	void render();

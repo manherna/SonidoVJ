@@ -13,8 +13,11 @@ int main(int argc, char *args[])
 
 	Looper * looper = new Looper();
 
-	if (!looper->init())exit(-1);
+	if (!looper->init())
+		exit(-1);
+
 	while (looper->run());
+
 	looper->release();
 	delete looper;
 	exit(0);

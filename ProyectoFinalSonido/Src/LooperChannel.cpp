@@ -26,11 +26,6 @@ LooperChannel::~LooperChannel()
 	_sound->release();
 }
 
-void LooperChannel::release()
-{
-	_sound->release();		
-}
-
 /*
 	Carga un sonido desde otro Sound.
 	@param sound: FMOD::Sound que se asigna a LooperSound.
@@ -80,7 +75,6 @@ void LooperChannel::playSound()
 	}
 	setLooping(_attr.loop);
 }
-
 
 void LooperChannel::pauseSound()
 {
@@ -175,7 +169,15 @@ void LooperChannel::setEcho(float n)
 
 void LooperChannel::toggleFlange()
 {
+	bool active;
 
+	dsp_flange->getActive(&active);
+
+	if (active)
+		_channel->removeDSP(dsp_flange);
+	else	
+		_channel->addDSP(1, dsp_flange);		
+	
 }
 
 void LooperChannel::setChannelAttributes(FMOD::Channel * ch)
