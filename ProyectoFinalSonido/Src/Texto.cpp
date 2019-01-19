@@ -2,18 +2,26 @@
 
 Texto::Texto(std::string cadena, SDL_Renderer* renderer)
 {
-	loadFont(cadena, renderer);
-	//renderer_ = renderer;
+	renderer_ = renderer;
+#if Debug
+	//Open the font	
+	gFont = TTF_OpenFont("../Fonts/arial.ttf", 14);
+#else
+	gFont = TTF_OpenFont("../../Fonts/arial.ttf", 14);
+#endif
+	loadFont(cadena);
+
 }
 Texto::~Texto()
 {
 	SDL_free(textFont);		
 	SDL_free(gFont);	
+	SDL_free(textSurface);
 }
 
-void Texto::setString(std::string text, SDL_Renderer* renderer)
+void Texto::setString(std::string text)
 {
-	loadFont(text, renderer);
+	loadFont(text);
 	setPosition(x_, y_);
 }
 
@@ -24,31 +32,23 @@ void Texto::setPosition(int x, int y)
 	textPos = { x_, y_, textPos.w, textPos.h };
 }
 
-void Texto::loadFont(std::string text, SDL_Renderer* renderer)
+void Texto::loadFont(std::string text)
 {
-
-#if Debug
-	//Open the font
-	gFont = TTF_OpenFont("../Fonts/arial.ttf", 14);
-#else
-	gFont = TTF_OpenFont("../../Fonts/arial.ttf", 14);
-#endif
-
 	if (gFont == NULL)
 		printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
 	else
 	{
 		//Render text
-		SDL_Color textColor = { 255, 255, 255 };
-		if (!load(text.c_str(), textColor, renderer))
+		textColor = { 255, 255, 255 };
+		if (!load(text.c_str(), textColor))
 			printf("Failed to render text texture!\n");
 	}
 }
 
-bool Texto::load(std::string textureText, SDL_Color textColor, SDL_Renderer* renderer)
+bool Texto::load(std::string textureText, SDL_Color textColor)
 {
 	//Render text surface
-	SDL_Surface* textSurface = TTF_RenderText_Solid(gFont, textureText.c_str(), textColor);
+	textSurface = TTF_RenderText_Solid(gFont, textureText.c_str(), textColor);
 	if (textSurface == NULL)
 	{
 		printf("Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError());
@@ -56,7 +56,7 @@ bool Texto::load(std::string textureText, SDL_Color textColor, SDL_Renderer* ren
 	else
 	{
 		//Create texture from surface pixels
-		textFont = SDL_CreateTextureFromSurface(renderer, textSurface);
+		textFont = SDL_CreateTextureFromSurface(renderer_, textSurface);
 		if (textFont == NULL)
 		{
 			printf("Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError());

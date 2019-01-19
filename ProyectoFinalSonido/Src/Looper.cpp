@@ -112,8 +112,11 @@ bool Looper::init()
 	_addMode = NOADD;
 	_lastAddMode = NOADD;
 
-	textos[0]->setString("P (play), X (remove), O (pitch), F (Flange), E (Echo), V (Volume), + and - (adjust), SPACE (no effect)", renderer);
-	textos[3]->setString("Drop a file into the window to get started.", renderer);
+	textos[0]->setString("P (play), X (remove), O (pitch), F (Flange), E (Echo), V (Volume), + and - (adjust), SPACE (no effect)");
+	textos[3]->setString("Drop a file into the window to get started.");
+
+	textos[1]->setString("Active Mode: ");	
+	textos[2]->setString("Active Channel volume: ");
 
 	Recorder::init(_system);
 	return true;
@@ -165,6 +168,7 @@ void Looper::release() {
 	SDL_free(fullSound);	
 	SDL_free(selector);	
 	SDL_free(recordingTexture);
+	SDL_free(auxTexture);
 
 	FMOD_RESULT res;
 	res = _system->release();
@@ -226,39 +230,22 @@ void Looper::render()
 {		
 	SDL_RenderClear(renderer);
 
-	SDL_Texture* aux = nullptr;
+	auxTexture = nullptr;
 	selecPos.x = _activeChannel * 100; //Selector
 
 	//En funcion del estado de la pista, la textura sera "full" o "empty"
 	for (int i = 0; i < _channels.size(); i++)
 	{		
-		if (_channels[i]->isPlaying()) aux = fullSound;
-		else aux = emptySound;
+		if (_channels[i]->isPlaying()) auxTexture = fullSound;
+		else auxTexture = emptySound;
 
 		_channels[i]->setRectX(i*100); //Para que se coloquen segun su indice
-		SDL_RenderCopy(renderer, aux, NULL, &_channels[i]->getRect());		
+		SDL_RenderCopy(renderer, auxTexture, NULL, &_channels[i]->getRect());
 	}
 	
-	//Selector pista activa
+	//Selector pista activa	
 	SDL_RenderCopy(renderer, selector, NULL, &selecPos);
-	//Textura de recorder
-	if(Recorder::isRecording())
-		SDL_RenderCopy(renderer, recordingTexture, NULL, &recorderPos);
-
-	//Textos	
-	std::string activetext = getActiveMode();		
-
-	if(Recorder::isRecording())
-		textos[1]->setString("Active Mode: Recording", renderer);
-	else
-		textos[1]->setString("Active Mode: " + activetext, renderer);	
-
-	short volumen = 0;	
-	if (_activeChannel < _channels.size() && _channels[_activeChannel])
-		volumen = _channels[_activeChannel]->getVolume()*100;
-
-	textos[2]->setString("Active Channel volume: " + std::to_string(volumen), renderer);
-	
+			
 	//Textos parte inferior del programa con información
 	for (int i = 0; i < textos.size(); i++){
 		SDL_RenderCopy(renderer, textos[i]->getTexture(), NULL, &textos[i]->getRect());
@@ -267,9 +254,9 @@ void Looper::render()
 	for (int i = 0; i < textosCanciones.size(); i++){
 		textosCanciones[i]->setRectX(i * 100+10); //Para que se coloquen segun su indice
 		SDL_RenderCopy(renderer, textosCanciones[i]->getTexture(), NULL, &textosCanciones[i]->getRect());
-	}
+	}	
 	
-	SDL_RenderPresent(renderer);	
+	SDL_RenderPresent(renderer);		
 }
 
 void Looper::processKeys()
@@ -386,14 +373,11 @@ void Looper::processKeys()
 void Looper::deleteSound(int n)
 {	
 	//Apartado sonoro
-	_channels[n]->stopSound();
-	//_channels[n]->release(); //release del atributo sound
+	_channels[n]->stopSound();	
 	delete _channels[n];
 	_channels.erase(_channels.begin() + n );
 
-	//Apartado visual
-	//SDL_free(textosCanciones[n]->getFont());
-	//SDL_free(textosCanciones[n]->getTexture());	
+	//Apartado visual	
 	delete textosCanciones[n];
 	textosCanciones.erase(textosCanciones.begin() + n);
 }
@@ -466,6 +450,23 @@ void Looper::processState()
 		_addMode = NOADD;
 	}
 	_keypressed = false;
+
+	//Textura de recorder
+	if (Recorder::isRecording())
+		SDL_RenderCopy(renderer, recordingTexture, NULL, &recorderPos);
+	
+	//Textos	
+	if (Recorder::isRecording())
+		textos[1]->setString("Active Mode: Recording");
+
+	activetext = getActiveMode();
+	textos[1]->setString("Active Mode: " + activetext);
+
+	short volumen = 0;
+	if (_activeChannel < _channels.size() && _channels[_activeChannel])
+		volumen = _channels[_activeChannel]->getVolume() * 100;
+
+	textos[2]->setString("Active Channel volume: " + std::to_string(volumen));
 }
 
 void Looper::playChannel(const int & n)
@@ -516,7 +517,7 @@ void Looper::processDrop()
 
 	if (e.type == SDL_DROPFILE) 
 	{
-		textos[3]->setString(" ", renderer); //Ya no es necesario indicaciones
+		textos[3]->setString(" "); //Ya no es necesario indicaciones
 		dropped_filedir = e.drop.file;		
 
 		std::string s = getTitle();

@@ -80,5 +80,8 @@ private:
 	//Font	
 	std::vector<Texto*> textos;	
 	std::vector<Texto*> textosCanciones;
+
+	SDL_Texture* auxTexture;
+	std::string activetext;
 };
 
